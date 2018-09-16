@@ -44,7 +44,7 @@ class _MyHomePageState extends State<HomePage> {
       appBar: new AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: new Text(widget.title),
+        title: new Text('hello'),
       ),
       body: new Center(
         // Center is a layout widget. It takes a single child and positions it
