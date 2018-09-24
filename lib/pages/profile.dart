@@ -20,6 +20,7 @@ class _LoginFirstPage extends StatelessWidget {
 }
 
 class ProfileState extends State<ProfilePage> {
+
   @override
   Widget build(BuildContext context) {
     if (AppConfig.jwtToken == "") {
