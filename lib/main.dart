@@ -28,25 +28,17 @@ class _IndexPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
-      child: Scaffold(appBar: AppBar(
-        bottom: TabBar(
-          tabs: [
-            Tab(icon: Icon(Icons.home)),
-            Tab(icon: Icon(Icons.crop_square)),
-            Tab(icon: Icon(Icons.usb))
-          ]
-        ),
-        title: Text('home'),
-      ),
-      body: TabBarView(
-        children: [
-          HomePage(),
-          SqurePage(),
-          ProfilePage()
-        ]
-      ),)
-    );
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(tabs: [
+              Tab(icon: Icon(Icons.home)),
+              Tab(icon: Icon(Icons.crop_square)),
+              Tab(icon: Icon(Icons.usb))
+            ]),
+            title: Text('home'),
+          ),
+          body: TabBarView(children: [HomePage(), SqurePage(), ProfilePage()]),
+        ));
   }
 }
-

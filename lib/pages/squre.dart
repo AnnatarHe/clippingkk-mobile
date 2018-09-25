@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class SqureState extends State<SqurePage> {
   @override
-    Widget build(BuildContext context) {
-      // TODO: implement build
-      return Center(
-        child: Text('squre')
-      );
-    }
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Center(child: Text('squre'));
+  }
 }
 
 class SqurePage extends StatefulWidget {

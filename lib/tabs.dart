@@ -1,4 +1,3 @@
 import 'package:flutter/material.dart';
 
-class HomeTabs extends DefaultTabController {
-}
+class HomeTabs extends DefaultTabController {}

@@ -4,7 +4,8 @@ import '../model/config.dart';
 class _LoginFirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: Center(
+    return Container(
+        child: Center(
       child: Card(
         child: IconButton(
           icon: Icon(Icons.lock),
@@ -20,16 +21,13 @@ class _LoginFirstPage extends StatelessWidget {
 }
 
 class ProfileState extends State<ProfilePage> {
-
   @override
   Widget build(BuildContext context) {
     if (AppConfig.jwtToken == "") {
       return _LoginFirstPage();
     }
     // TODO: implement build
-    return Center(
-      child: Text('squre')
-    );
+    return Center(child: Text('squre'));
   }
 }
 
