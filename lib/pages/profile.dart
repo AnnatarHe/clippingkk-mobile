@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/config.dart';
+import '../model/appConfig.dart';
 
 class _LoginFirstPage extends StatelessWidget {
   @override

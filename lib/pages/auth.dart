@@ -9,14 +9,18 @@ class AuthState extends State<AuthPage> {
     final String bgImage =
         "https://kindle.annatarhe.com/coffee-d3ec79a0efd30ac2704aa2f26e72cb28.jpg";
 
-    return Container(
-      decoration: BoxDecoration(
-          image:
-              DecorationImage(image: NetworkImage(bgImage), fit: BoxFit.cover)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: AuthContent(),
-      ),
+    return Scaffold(
+      appBar: AppBar(title: Text('Authorization')),
+      body: Center(
+        child: Card(
+          child: Container(
+            padding: const EdgeInsets.all(10.0),
+            height: 250.0,
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: AuthContent(),
+          )
+        )
+      )
     );
   }
 }
