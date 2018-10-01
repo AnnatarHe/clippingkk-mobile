@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class SqureState extends State<SqurePage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Center(child: Text('squre'));
+    return Center(child: Text('暂未开放，敬请期待'));
   }
 }
 
