@@ -10,18 +10,15 @@ class AuthState extends State<AuthPage> {
         "https://kindle.annatarhe.com/coffee-d3ec79a0efd30ac2704aa2f26e72cb28.jpg";
 
     return Scaffold(
-      appBar: AppBar(title: Text('Authorization')),
-      body: Center(
-        child: Card(
-          child: Container(
-            padding: const EdgeInsets.all(10.0),
-            height: 250.0,
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: AuthContent(),
-          )
-        )
-      )
-    );
+        appBar: AppBar(title: Text('Authorization')),
+        body: Center(
+            child: Card(
+                child: Container(
+          padding: const EdgeInsets.all(10.0),
+          height: 250.0,
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: AuthContent(),
+        ))));
   }
 }
 

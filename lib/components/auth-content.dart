@@ -1,12 +1,7 @@
-import 'dart:convert';
-import 'dart:developer';
+import 'package:flutter/material.dart';
 
 import 'package:ClippingKK/model/httpClient.dart';
-import 'package:ClippingKK/model/httpResponse.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../model/appConfig.dart';
+import 'package:ClippingKK/repository/auth.dart';
 
 class AuthContent extends StatefulWidget {
   @override
@@ -16,52 +11,42 @@ class AuthContent extends StatefulWidget {
 }
 
 class AuthContentState extends State<AuthContent> {
-  final TextEditingController emailInputController = TextEditingController();
-  final TextEditingController pwdInputController = TextEditingController();
-  final _keychain = FlutterSecureStorage();
+  final TextEditingController emailInputController =
+      TextEditingController(text: '');
+  final TextEditingController pwdInputController =
+      TextEditingController(text: '');
 
   void _tryToLogin(BuildContext context) async {
     final email = emailInputController.text;
     final pwd = pwdInputController.text;
     if (email.isEmpty || pwd.isEmpty) {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text("email or password are empty")));
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text("email or password are empty")));
       return;
     }
 
-    final resp = await KKHttpClient().post('${AppConfig.httpPrefix}/auth/login',
-        body: {email: email, pwd: pwd});
-    final respJson = HttpResponse.fromJSON(json.decode(resp.body));
-
-    if (respJson.status != 200) {
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(respJson.msg)));
-      return;
-    }
-
-    final String token = respJson.data["token"];
-
-    AppConfig.jwtToken = token;
-    this._keychain.write(key: "jwt", value: token);
-
-    log(token);
-    Navigator.pop(context);
+    await AuthRepository().login(email, pwd).then((User user) {
+      Navigator.pop(context);
+    }).catchError((Error err) {
+      Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text(err.toString())));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
+    return Column(children: <Widget>[
       _InputItem(
-            inputController: emailInputController, label: _inputType.email),
-      _InputItem(
-            inputController: pwdInputController, label: _inputType.pwd),
+          inputController: emailInputController, label: _inputType.email),
+      _InputItem(inputController: pwdInputController, label: _inputType.pwd),
       Expanded(
-          child: MaterialButton(
-              minWidth: 300.0,
-              color: Theme.of(context).primaryColor,
-              child: Text("Submit", style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                this._tryToLogin(context);
-              }))
+        child: MaterialButton(
+          minWidth: 300.0,
+          color: Theme.of(context).primaryColor,
+          child: Text("Submit", style: TextStyle(color: Colors.white)),
+          onPressed: () {
+            this._tryToLogin(context);
+          }))
     ]);
   }
 }
@@ -88,7 +73,7 @@ class _InputItem extends StatelessWidget {
               Icon(this.label == _inputType.email ? Icons.email : Icons.lock),
         ),
         controller: inputController,
-        onChanged: (v) => inputController.text = v,
+        // onChanged: (v) => inputController.text = v,
       ),
       padding: const EdgeInsets.only(bottom: 10.0),
     );
