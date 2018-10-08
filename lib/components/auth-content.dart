@@ -1,3 +1,5 @@
+import 'package:ClippingKK/model/appConfig.dart';
+import 'package:ClippingKK/model/httpError.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ClippingKK/model/httpClient.dart';
@@ -25,12 +27,14 @@ class AuthContentState extends State<AuthContent> {
       return;
     }
 
-    await AuthRepository().login(email, pwd).then((User user) {
-      Navigator.pop(context);
-    }).catchError((Error err) {
+    try {
+      await AuthRepository().login(email, pwd);
+      Navigator.pop(context, AppConfig.jwtToken);
+    } on KKHttpError catch(err) {
       Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text(err.toString())));
-    });
+    }
+
   }
 
   @override

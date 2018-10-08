@@ -1,9 +1,9 @@
 class HttpResponse {
   final int status;
   final String msg;
-  final Map<String, dynamic> data;
+  final dynamic data;
 
-  HttpResponse.fromJSON(Map<String, dynamic> json)
+  HttpResponse.fromJSON(dynamic json)
       : status = json["status"],
         msg = json["msg"],
         data = json["data"];
