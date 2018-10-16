@@ -1,12 +1,22 @@
+import 'package:ClippingKK/model/appConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './pages/home.dart';
 import './pages/profile.dart';
 import './pages/squre.dart';
 import './pages/auth.dart';
 
-void main() => runApp(new MyApp());
+void main() async {
+  final jwt = await FlutterSecureStorage().read(key: 'jwt');
+  final uid = await FlutterSecureStorage().read(key: 'uid');
+  AppConfig.jwtToken = jwt;
+  AppConfig.uid = uid != null ? int.parse(uid) : -1;
+  print(AppConfig.jwtToken);
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

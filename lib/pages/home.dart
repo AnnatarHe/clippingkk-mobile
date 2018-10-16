@@ -1,3 +1,4 @@
+import 'package:ClippingKK/repository/clippings.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,6 +20,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    ClippingsAPI().getClippings(0, 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

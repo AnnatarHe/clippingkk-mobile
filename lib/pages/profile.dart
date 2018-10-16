@@ -22,17 +22,13 @@ class _LoginFirstPage extends StatelessWidget {
 
   void onPressBtnPressed(BuildContext context) async {
     final result = await Navigator.pushNamed(context, '/auth');
-    print(result);
     onGotJWT(result);
   }
 }
-
 class ProfileState extends State<ProfilePage> {
-
   String token = "";
 
   void onGotToken(String token) {
-    AppConfig.jwtToken = token;
     setState(() {
       this.token = token;
     });

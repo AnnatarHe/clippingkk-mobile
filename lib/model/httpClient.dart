@@ -28,6 +28,7 @@ class User {
   final String email;
   final String avatar;
   final bool checked;
+  String jwtToken;
 
   User.fromJSON(dynamic json)
       : id = json["id"],

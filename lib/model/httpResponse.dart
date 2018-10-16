@@ -8,3 +8,22 @@ class HttpResponse {
         msg = json["msg"],
         data = json["data"];
 }
+
+class ClippingItem {
+  final int id;
+  final String title;
+  final String content;
+  final String bookId;
+  final String pageAt;
+  final int createdBy;
+  final int sequence;
+
+  ClippingItem.fromJSON(dynamic json)
+    : id = json["id"],
+      title = json['title'],
+      content = json['content'],
+      bookId = json['bookId'],
+      pageAt = json['pageAt'],
+      createdBy = json['createdBy'],
+      sequence = json['seq'];
+}
