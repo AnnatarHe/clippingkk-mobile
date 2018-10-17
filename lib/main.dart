@@ -11,7 +11,6 @@ void main() async {
   final uid = await FlutterSecureStorage().read(key: 'uid');
   AppConfig.jwtToken = jwt;
   AppConfig.uid = uid != null ? int.parse(uid) : -1;
-  print(AppConfig.jwtToken);
   runApp(new MyApp());
 }
 

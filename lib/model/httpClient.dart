@@ -18,7 +18,7 @@ class KKHttpClient extends Dio {
   }
 
   updateJWTToken(String token) {
-    this.client.options.headers = {"Authorization": token};
+    this.client.options.headers = {'Authorization': 'Bearer $token'};
   }
 }
 

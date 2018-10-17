@@ -1,5 +1,7 @@
+import 'package:ClippingKK/components/card-clipping.dart';
 import 'package:ClippingKK/repository/clippings.dart';
 import 'package:flutter/material.dart';
+import 'package:ClippingKK/model/httpResponse.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -21,34 +23,39 @@ class HomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<HomePage> {
 
+  List<ClippingItem> clippingItems = [];
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    loadData();
+  }
 
-    ClippingsAPI().getClippings(0, 0);
+  void loadData() {
+    ClippingsAPI().getClippings(20, 0)
+      .then((result) {
+        setState(() {
+          clippingItems.addAll(result);
+        });
+      });
+
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-            new Text(
-              '11',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+      body: Container(
+        child: ListView.builder(
+          itemCount: this.clippingItems.length,
+          itemBuilder: (ctx, index) {
+            return CardClipping();
+          },
         ),
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () => {},
-        tooltip: 'Increment',
+        tooltip: 'none',
         child: new Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
