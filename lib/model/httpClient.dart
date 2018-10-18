@@ -10,11 +10,16 @@ class KKHttpClient extends Dio {
   KKHttpClient() {
     this.client = Dio(Options(
       baseUrl: AppConfig.httpPrefix,
-      connectTimeout: 1000,
+      connectTimeout: 3000,
       receiveTimeout: 1000,
     ));
 
     this.updateJWTToken(AppConfig.jwtToken);
+
+    // this.client.interceptor.request.onSend = (Options options) {
+    //   print('${options.baseUrl}${options.path} data: ${options.data}, ${options.headers}, ${options.extra}');
+    //   return options;
+    // };
   }
 
   updateJWTToken(String token) {

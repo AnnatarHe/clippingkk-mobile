@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<HomePage> {
 
-  List<ClippingItem> clippingItems = [];
+  List<ClippingItem> _clippingItems = [];
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<HomePage> {
     ClippingsAPI().getClippings(20, 0)
       .then((result) {
         setState(() {
-          clippingItems.addAll(result);
+          _clippingItems.addAll(result);
         });
       });
 
@@ -47,9 +47,9 @@ class _MyHomePageState extends State<HomePage> {
     return new Scaffold(
       body: Container(
         child: ListView.builder(
-          itemCount: this.clippingItems.length,
+          itemCount: this._clippingItems.length,
           itemBuilder: (ctx, index) {
-            return CardClipping();
+            return CardClipping(item: _clippingItems[index]);
           },
         ),
       ),

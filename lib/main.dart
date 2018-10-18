@@ -15,7 +15,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -33,21 +32,91 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _IndexPage extends StatelessWidget {
+class _IndexPage extends StatefulWidget {
+  @override
+  _IndexPageState createState() {
+    return new _IndexPageState();
+  }
+}
+
+class _IndexPageState extends State<_IndexPage> {
+  int _currentIndex = 0;
+  bool _hasToken = false;
+
+  _IndexPageState() {
+    if (AppConfig.jwtToken != "") {
+      _hasToken = true;
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+
+    if (!this._hasToken) {
+      Future.delayed(const Duration(microseconds: 10), () { _checkAuth(); });
+    }
+  }
+
+  void _checkAuth() async {
+    final result = await Navigator.pushNamed(context, '/auth');
+    if (result != "") {
+      _checkAuth();
+    }
+
+    setState(() {
+      _hasToken = true;
+    });
+  }
+
+  Widget _getBody() {
+    if (!_hasToken) {
+      return Text('placeholder');
+    }
+
+    switch (_currentIndex) {
+      case 0:
+        return HomePage();
+      case 1:
+        return SqurePage();
+      case 2:
+        return ProfilePage();
+      default:
+        return AuthPage();
+    }
+  }
+
+  void _changeTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            bottom: TabBar(tabs: [
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.crop_square)),
-              Tab(icon: Icon(Icons.usb))
-            ]),
-            title: Text('home'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('home'),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Home'),
           ),
-          body: TabBarView(children: [HomePage(), SqurePage(), ProfilePage()]),
-        ));
+          BottomNavigationBarItem(
+            icon: Icon(Icons.crop_square),
+            title: Text('Square'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.usb),
+            title: Text('My'),
+          ),
+        ],
+        currentIndex: _currentIndex,
+        onTap: _changeTab,
+      ),
+      body: this._getBody(),
+    );
   }
 }
