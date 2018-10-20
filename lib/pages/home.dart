@@ -5,41 +5,60 @@ import 'package:ClippingKK/model/httpResponse.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
-
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<HomePage> {
+const _take_pre_page = 5;
 
+class _MyHomePageState extends State<HomePage> {
   List<ClippingItem> _clippingItems = [];
+  ScrollController _listViewController = ScrollController();
+
+  bool _loading = false;
+  bool _hasMore = true;
+  int _offset = 0;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _listViewController.addListener(() {
+      if (_listViewController.position.pixels ==
+          _listViewController.position.maxScrollExtent) {
+        this.loadData();
+      }
+    });
     loadData();
   }
 
-  void loadData() {
-    ClippingsAPI().getClippings(20, 0)
-      .then((result) {
-        setState(() {
-          _clippingItems.addAll(result);
-        });
-      });
+  @override
+  void dispose() {
+    super.dispose();
+    _listViewController.dispose();
+  }
 
+  void loadData() {
+    if (_loading || !_hasMore) {
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+    });
+
+    ClippingsAPI().getClippings(_take_pre_page, _offset).then((result) {
+      setState(() {
+        _loading = false;
+        _hasMore = result.length != 0;
+        _offset += _take_pre_page;
+        _clippingItems.addAll(result);
+      });
+    }).catchError(() {
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   @override
@@ -47,17 +66,13 @@ class _MyHomePageState extends State<HomePage> {
     return new Scaffold(
       body: Container(
         child: ListView.builder(
+          controller: _listViewController,
           itemCount: this._clippingItems.length,
           itemBuilder: (ctx, index) {
             return CardClipping(item: _clippingItems[index]);
           },
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'none',
-        child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

@@ -29,13 +29,14 @@ class AuthRepository extends KKHttpClient {
     }
     String token = response.data["token"];
     this.updateJWTToken(token);
-
-    AppConfig.jwtToken = token;
     User u = User.fromJSON(response.data["profile"]);
     u.jwtToken = token;
 
     FlutterSecureStorage().write(key: "jwt", value: token);
     FlutterSecureStorage().write(key: "uid", value: u.id.toString());
+
+    AppConfig.jwtToken = token;
+    AppConfig.uid = u.id;
     return u;
   }
 }
