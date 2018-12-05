@@ -29,7 +29,7 @@ class AuthContentState extends State<AuthContent> {
 
     try {
       User u = await AuthRepository().login(email, pwd);
-      Navigator.pop(context, u.jwtToken);
+      Navigator.pop(context, u);
     } on KKHttpError catch(err) {
       Scaffold.of(context)
         .showSnackBar(SnackBar(content: Text(err.toString())));

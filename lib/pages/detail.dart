@@ -134,6 +134,10 @@ class _ImageCanvasState extends State<_ImageCanvas> {
     // final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 2, CANVAS_HEIGHT ~/ 2).toByteData(format: ImageByteFormat.png);
     final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 4, CANVAS_HEIGHT ~/ 4).toByteData(format: ImageByteFormat.png);
 
+    if (!this.mounted) {
+      return;
+    }
+
     setState(() {
       _img = pngBytes;
       _loading = false;

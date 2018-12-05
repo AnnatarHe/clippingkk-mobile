@@ -3,7 +3,7 @@ import 'package:ClippingKK/pages/detail.dart';
 import 'package:flutter/material.dart';
 
 const _contentTextStyle = TextStyle(
-  fontSize: 24.0,
+  fontSize: 16.0,
   color: Color.fromRGBO(0, 0, 0, 1.0),
 );
 
@@ -31,9 +31,15 @@ class CardClipping extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                Text(item.content, style: _contentTextStyle),
-                Text('—— 【${item.title}】',
-                    textAlign: TextAlign.right, style: _titleTextStyle)
+                Text(
+                  item.content,
+                  style: _contentTextStyle
+                ),
+                Text(
+                  '—— 【${item.title}】',
+                  textAlign: TextAlign.right,
+                  style: _titleTextStyle
+                )
               ],
             ),
           )),

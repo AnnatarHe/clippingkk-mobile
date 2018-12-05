@@ -1,8 +1,10 @@
+import 'package:ClippingKK/model/httpClient.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import '../model/appConfig.dart';
 
 class _LoginFirstPage extends StatelessWidget {
-  void Function(String token) onGotJWT;
+  void Function(String token, int uid) onGotJWT;
 
   _LoginFirstPage({ this.onGotJWT });
 
@@ -21,26 +23,16 @@ class _LoginFirstPage extends StatelessWidget {
   }
 
   void onPressBtnPressed(BuildContext context) async {
-    final result = await Navigator.pushNamed(context, '/auth');
-    onGotJWT(result);
+    final User result = await Navigator.pushNamed(context, '/auth');
+    onGotJWT(result.jwtToken, result.id);
   }
 }
 class ProfileState extends State<ProfilePage> {
-  String token = "";
-
-  void onGotToken(String token) {
-    setState(() {
-      this.token = token;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (this.token == "") {
-      return _LoginFirstPage(onGotJWT: onGotToken);
-    }
-    // TODO: implement build
-    return Center(child: Text('squre'));
+    return ScopedModelDescendant<GlobalAppConfig>(
+      builder: (context, child, model) => model.jwtToken == "" ? _LoginFirstPage(onGotJWT: model.update) : Center(child: Text('squre'))
+    );
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:ClippingKK/components/appbar-title.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
+import 'package:scoped_model/scoped_model.dart';
 import './pages/home.dart';
 import './pages/profile.dart';
 import './pages/squre.dart';
@@ -14,47 +15,31 @@ class IndexPage extends StatefulWidget {
 
 class IndexPageState extends State<IndexPage> {
   int _currentIndex = 0;
-  bool _hasToken = false;
 
   List<Widget> _tabs = [];
-
-  IndexPageState() {
-    if (AppConfig.jwtToken != "") {
-      _hasToken = true;
-    }
-  }
 
   @override
   initState() {
     super.initState();
 
-    if (!this._hasToken) {
-      Future.delayed(const Duration(microseconds: 10), () { _checkAuth(); });
-    }
+    Future.delayed(const Duration(microseconds: 1000), () { _checkAuth(); });
   }
 
   void _checkAuth() async {
-    final result = await Navigator.pushNamed(context, '/auth');
-    if (result != "") {
-      _checkAuth();
+    if (AppConfig.jwtToken == '') {
+      await Navigator.pushNamed(context, '/auth');
+      this._checkAuth();
     }
-
-    setState(() {
-      _hasToken = true;
-    });
+    return;
   }
 
   Widget _getBody() {
-    if (!_hasToken) {
-      return Text('placeholder');
-    }
-
     if (_tabs.length == 0) {
-    _tabs.addAll([
-      HomePage(),
-      SqurePage(),
-      ProfilePage(),
-    ]);
+      _tabs.addAll([
+        HomePage(),
+        SqurePage(),
+        ProfilePage(),
+      ]);
     }
 
     return _tabs[_currentIndex];
@@ -66,31 +51,43 @@ class IndexPageState extends State<IndexPage> {
     });
   }
 
+  Widget _childBuilder(BuildContext context, Widget child, GlobalAppConfig model) {
+    if (model.jwtToken != "") {
+      return this._getBody();
+    }
+
+    this._checkAuth();
+    return Text("placeholder");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: AppBarTitle(tabIndex: this._currentIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.crop_square),
-            title: Text('Square'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.usb),
-            title: Text('My'),
-          ),
-        ],
-        currentIndex: _currentIndex,
-        onTap: _changeTab,
-      ),
-      body: this._getBody(),
+    return ScopedModel<GlobalAppConfig>(
+      model: GlobalAppConfig(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: AppBarTitle(tabIndex: this._currentIndex),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance),
+              title: Text('Square'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.face),
+              title: Text('Profile'),
+            ),
+          ],
+          currentIndex: _currentIndex,
+          onTap: _changeTab,
+        ),
+        body: ScopedModelDescendant<GlobalAppConfig>(builder: this._childBuilder)
+      )
     );
   }
 }
