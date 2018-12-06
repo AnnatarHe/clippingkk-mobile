@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
-import 'dart:io';
-import 'dart:convert';
+import 'dart:core';
+import 'dart:async';
 import 'package:ClippingKK/model/doubanBookInfo.dart';
 import 'package:ClippingKK/repository/douban.dart';
 import 'package:flutter/services.dart';
@@ -14,8 +14,8 @@ import 'dart:ui' as ui;
 const _defaultBackgroundImage =
     'https://kindle.annatarhe.com/coffee-d3ec79a0efd30ac2704aa2f26e72cb28.jpg';
 
-const CANVAS_HEIGHT = 640.0;
-const CANVAS_WIDTH = 320.0;
+const CANVAS_HEIGHT = 1920.0;
+const CANVAS_WIDTH = 1080.0;
 
 // Flutter 尚不支持命名路由, 所以没能加入到根路由上
 class DetailPage extends StatefulWidget {
@@ -108,31 +108,45 @@ class _ImageCanvasState extends State<_ImageCanvas> {
     this._buildImage();
   }
 
+  Future<ui.Image> _loadImageAssets(String url) async {
+    final _image = await http.readBytes(url);
+
+    final bg = await ui.instantiateImageCodec(_image);
+    final frame = await bg.getNextFrame();
+    final img = frame.image;
+    return img;
+  }
+
   void _buildImage() async {
     final recorder = new PictureRecorder();
     final canvas = new Canvas(recorder,
         new Rect.fromPoints(new Offset(0.0, 0.0), new Offset(CANVAS_WIDTH, CANVAS_HEIGHT)));
     
     final paint = new Paint()
-      ..color = Colors.black26
+      ..color = Colors.teal
       ..style = PaintingStyle.fill;
+
+    final responses = await Future.wait([
+      this._loadImageAssets(_defaultBackgroundImage),
+    ]);
 
     canvas.drawRect(Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT), paint);
 
     final _paragraph = ParagraphBuilder(
         ParagraphStyle(textAlign: TextAlign.left, fontSize: 24.0)
       );
-    _paragraph.addText('hello');
+    _paragraph.addText('heelo jdklfjasdklfje');
     final p = _paragraph.build();
     p.layout(ParagraphConstraints(width: 100.0));
-    final bg = await this._loadImage();
     // not working
-    canvas.drawImage(bg, Offset(20.0, 20.0), paint);
+    canvas.drawRect(Rect.fromLTWH(0.0, 0.0, 200.0, 200.0), Paint()..color = Colors.amber);
+    print(responses[0].width);
+    print(responses[0].height);
+    canvas.drawImage(responses[0], Offset.zero, Paint());
     canvas.drawParagraph(p, Offset(30.0, 30.0));
 
     final picture = recorder.endRecording();
-    // final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 2, CANVAS_HEIGHT ~/ 2).toByteData(format: ImageByteFormat.png);
-    final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 4, CANVAS_HEIGHT ~/ 4).toByteData(format: ImageByteFormat.png);
+    final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 1, CANVAS_HEIGHT ~/ 1).toByteData(format: ImageByteFormat.png);
 
     if (!this.mounted) {
       return;
@@ -142,18 +156,8 @@ class _ImageCanvasState extends State<_ImageCanvas> {
       _img = pngBytes;
       _loading = false;
     });
-    // await platform.invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
-  }
 
-  Future<ui.Image> _loadImage() async {
-    final _image = await http.readBytes(_defaultBackgroundImage);
-
-    final bg = await ui.instantiateImageCodec(_image);
-    final frame = await bg.getNextFrame();
-    final img = frame.image;
-    print(img.width);
-    print(img.height);
-    return img;
+    await platform.invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
   }
 
   @override
