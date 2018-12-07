@@ -19,7 +19,8 @@ class GlobalAppConfig extends Model {
   int _uid = -1;
 
   GlobalAppConfig() {
-    this.update(AppConfig.jwtToken, AppConfig.uid);
+    _jwtToken = AppConfig.jwtToken;
+    _uid = AppConfig.uid;
   }
 
   String get jwtToken => _jwtToken;

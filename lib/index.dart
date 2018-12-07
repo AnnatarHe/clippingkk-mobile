@@ -22,13 +22,13 @@ class IndexPageState extends State<IndexPage> {
   initState() {
     super.initState();
 
-    Future.delayed(const Duration(microseconds: 1000), () { _checkAuth(); });
+    Future.delayed(const Duration(microseconds: 100), () { _checkAuth(); });
   }
 
   void _checkAuth() async {
     if (AppConfig.jwtToken == '') {
+      await Future.delayed(const Duration(milliseconds: 100));
       await Navigator.pushNamed(context, '/auth');
-      this._checkAuth();
     }
     return;
   }
@@ -56,8 +56,7 @@ class IndexPageState extends State<IndexPage> {
       return this._getBody();
     }
 
-    this._checkAuth();
-    return Text("placeholder");
+    return Center(child: Text("Login please"));
   }
 
   @override
@@ -67,6 +66,12 @@ class IndexPageState extends State<IndexPage> {
       child: Scaffold(
         appBar: AppBar(
           title: AppBarTitle(tabIndex: this._currentIndex),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.directions_run),
+              onPressed: () { Navigator.pushNamed(context, "/auth"); },
+            )
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           items: [

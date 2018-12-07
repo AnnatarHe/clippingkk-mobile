@@ -31,7 +31,7 @@ class ProfileState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GlobalAppConfig>(
-      builder: (context, child, model) => model.jwtToken == "" ? _LoginFirstPage(onGotJWT: model.update) : Center(child: Text('squre'))
+      builder: (context, child, model) => model.jwtToken == "" ? _LoginFirstPage(onGotJWT: model.update) : Center(child: Text('profile'))
     );
   }
 }

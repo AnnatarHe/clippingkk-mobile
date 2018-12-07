@@ -7,7 +7,7 @@ import './pages/auth.dart';
 void main() async {
   final jwt = await FlutterSecureStorage().read(key: 'jwt');
   final uid = await FlutterSecureStorage().read(key: 'uid');
-  AppConfig.jwtToken = jwt;
+  AppConfig.jwtToken = jwt == null ? "" : jwt;
   AppConfig.uid = uid != null ? int.parse(uid) : -1;
   runApp(new MyApp());
 }
