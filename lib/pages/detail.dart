@@ -2,8 +2,10 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:core';
 import 'dart:async';
+import 'package:ClippingKK/components/clipping-content-text.dart';
 import 'package:ClippingKK/model/doubanBookInfo.dart';
 import 'package:ClippingKK/repository/douban.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
@@ -30,6 +32,12 @@ class DetailPage extends StatefulWidget {
 }
 
 class DetailPageState extends State<DetailPage> {
+
+  static const platform =
+  const MethodChannel('com.annatarhe.clippingkk/channel');
+
+  static GlobalKey previewContainer = new GlobalKey();
+
   DoubanBookInfo _bookInfo;
 
   @override
@@ -45,38 +53,50 @@ class DetailPageState extends State<DetailPage> {
     });
   }
 
+  void _saveScreenshot() async {
+    RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+
+    await platform.invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundImage =
         _bookInfo != null ? _bookInfo.image : _defaultBackgroundImage;
+    final author = _bookInfo != null ? _bookInfo.author : '佚名';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.item.title),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
+        ],
       ),
       body: Container(
-        // height: MediaQuery.of(context).size.height,
-        // width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
         child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
             child: Center(
+              child: RepaintBoundary(
+                key: previewContainer,
                 child: Card(
-                    margin: const EdgeInsets.all(20.0),
-                    child: Center(
-                        child: Container(
-                            margin: const EdgeInsets.all(10.0),
-                            child: Column(
-                              children: <Widget>[
-                                Image.network(backgroundImage, width: 154.0, height: 218.0),
-                                Text(widget.item.content),
-                                _ImageCanvas(bookInfo: _bookInfo),
-                              ],
-                            )))))),
+                  margin: const EdgeInsets.all(10.0),
+                  child: Column(
+                  children: <Widget>[
+                    ClippingContentText(content: this.widget.item.content),
+                    Text(author)
+    ],
+                  ),
+    )
+    )
+    ),
       ),
-    );
+    ));
   }
 }
 
@@ -98,12 +118,13 @@ class _ImageCanvasState extends State<_ImageCanvas> {
   static const platform =
       const MethodChannel('com.annatarhe.clippingkk/channel');
 
+  static GlobalKey previewContainer = new GlobalKey();
+
   bool _loading = true;
   ByteData _img;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     this._buildImage();
   }

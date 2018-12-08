@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import './index.dart';
 import './pages/auth.dart';
-
 void main() async {
   final jwt = await FlutterSecureStorage().read(key: 'jwt');
   final uid = await FlutterSecureStorage().read(key: 'uid');
