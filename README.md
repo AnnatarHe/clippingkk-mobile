@@ -1,16 +1,17 @@
 # clippingkk
 
-A new Flutter project.
+项目施工中。
 
-## Getting Started
+![user interface](./docs/flutter_01.png)
 
-This project is a starting point for a Flutter application.
+ClippingKK 的移动客户端，使用 Flutter 构建。
 
-A few resources to get you started if this is your first Flutter project:
+此外还有 [Android 原生客户端](https://github.com/clippingkk/clippingkk-android) 和 [iOS 原生客户端](https://github.com/clippingkk/clippingkk-ios)
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+虽然 Flutter 有一些我个人不是很满意的地方，不过由于做 App 个人精力着实有限，最终不得已选择这种跨平台方案。目前看来 Flutter 发展不错，期待以后更好。
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+## 使用
+
+移动端没有注册接口，也没有上传文本的接口。目前只有 [Windows 客户端](https://github.com/clippingkk/kindle-viewer)可以注册用户，上传文本。
+
+最后，希望您用得愉快

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './pages/home.dart';
-import './pages/profile.dart';
+import 'package:ClippingKK/pages/profile/profile.dart';
 import './pages/squre.dart';
 
 class IndexPage extends StatefulWidget {

@@ -1,8 +1,6 @@
-import 'dart:async';
+import 'package:ClippingKK/model/httpResponse.dart';
 import 'package:dio/dio.dart';
-// import 'package:http/http.dart' as http;
 import './appConfig.dart';
-import './httpResponse.dart';
 
 class KKHttpClient extends Dio {
   Dio client;
@@ -41,4 +39,17 @@ class User {
         email = json['email'],
         avatar = json["avatar"],
         checked = json['checked'];
+}
+
+class UserProfileItem {
+  User user;
+  int clippingsCount;
+  List<ClippingItem> clippings;
+
+  UserProfileItem.fromJSON(dynamic json) {
+    user = User.fromJSON(json['user']);
+    clippingsCount = json['clippingsCount'];
+    final List<dynamic> _clippings = json['clippings'].toList();
+    clippings = _clippings.map((x) => ClippingItem.fromJSON(x)).toList();
+  }
 }

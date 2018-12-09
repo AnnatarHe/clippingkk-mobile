@@ -32,9 +32,8 @@ class DetailPage extends StatefulWidget {
 }
 
 class DetailPageState extends State<DetailPage> {
-
   static const platform =
-  const MethodChannel('com.annatarhe.clippingkk/channel');
+      const MethodChannel('com.annatarhe.clippingkk/channel');
 
   static GlobalKey previewContainer = new GlobalKey();
 
@@ -54,12 +53,14 @@ class DetailPageState extends State<DetailPage> {
   }
 
   void _saveScreenshot() async {
-    RenderRepaintBoundary boundary = previewContainer.currentContext.findRenderObject();
+    RenderRepaintBoundary boundary =
+        previewContainer.currentContext.findRenderObject();
     ui.Image image = await boundary.toImage();
     ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     Uint8List pngBytes = byteData.buffer.asUint8List();
 
-    await platform.invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
+    await platform
+        .invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
   }
 
   @override
@@ -69,42 +70,39 @@ class DetailPageState extends State<DetailPage> {
     final author = _bookInfo != null ? _bookInfo.author : '佚名';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.item.title),
-        actions: <Widget>[
-          IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
-        ],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
-        child: BackdropFilter(
+        appBar: AppBar(
+          title: Text(widget.item.title),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
+          ],
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
+          child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
             child: Center(
-              child: RepaintBoundary(
-                key: previewContainer,
-                child: Card(
-                  margin: const EdgeInsets.all(10.0),
-                  child: Column(
-                  children: <Widget>[
-                    ClippingContentText(content: this.widget.item.content),
-                    Text(author)
-    ],
-                  ),
-    )
-    )
-    ),
-      ),
-    ));
+                child: RepaintBoundary(
+                    key: previewContainer,
+                    child: Card(
+                      margin: const EdgeInsets.all(10.0),
+                      child: Column(
+                        children: <Widget>[
+//                          _ImageCanvas(bookInfo: this._bookInfo),
+                          ClippingContentText(
+                              content: this.widget.item.content),
+                          Text(author)
+                        ],
+                      ),
+                    ))),
+          ),
+        ));
   }
 }
 
 class _ImageCanvas extends StatefulWidget {
-  _ImageCanvas({
-    Key key,
-    this.bookInfo
-  }) : super(key: key);
+  _ImageCanvas({Key key, this.bookInfo}) : super(key: key);
 
   DoubanBookInfo bookInfo;
 
@@ -114,6 +112,8 @@ class _ImageCanvas extends StatefulWidget {
   }
 }
 
+// flutter 的 canvas 不能在 gpu 情况下正常渲染 drawImage
+// https://github.com/flutter/flutter/issues/23621
 class _ImageCanvasState extends State<_ImageCanvas> {
   static const platform =
       const MethodChannel('com.annatarhe.clippingkk/channel');
@@ -140,9 +140,11 @@ class _ImageCanvasState extends State<_ImageCanvas> {
 
   void _buildImage() async {
     final recorder = new PictureRecorder();
-    final canvas = new Canvas(recorder,
-        new Rect.fromPoints(new Offset(0.0, 0.0), new Offset(CANVAS_WIDTH, CANVAS_HEIGHT)));
-    
+    final canvas = new Canvas(
+        recorder,
+        new Rect.fromPoints(
+            new Offset(0.0, 0.0), new Offset(CANVAS_WIDTH, CANVAS_HEIGHT)));
+
     final paint = new Paint()
       ..color = Colors.teal
       ..style = PaintingStyle.fill;
@@ -151,23 +153,33 @@ class _ImageCanvasState extends State<_ImageCanvas> {
       this._loadImageAssets(_defaultBackgroundImage),
     ]);
 
-    canvas.drawRect(Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT), paint);
+    canvas.drawRect(
+        Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT), paint);
 
     final _paragraph = ParagraphBuilder(
-        ParagraphStyle(textAlign: TextAlign.left, fontSize: 24.0)
-      );
+        ParagraphStyle(textAlign: TextAlign.left, fontSize: 24.0));
     _paragraph.addText('heelo jdklfjasdklfje');
     final p = _paragraph.build();
     p.layout(ParagraphConstraints(width: 100.0));
     // not working
-    canvas.drawRect(Rect.fromLTWH(0.0, 0.0, 200.0, 200.0), Paint()..color = Colors.amber);
+    canvas.drawRect(
+        Rect.fromLTWH(0.0, 0.0, 200.0, 200.0), Paint()..color = Colors.amber);
     print(responses[0].width);
     print(responses[0].height);
-    canvas.drawImage(responses[0], Offset.zero, Paint());
+    final bg = responses[0];
+    canvas.drawImageRect(
+      bg,
+      Rect.fromLTWH(0.0, 0.0, bg.width.toDouble(), bg.height.toDouble()),
+      Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT),
+      Paint()
+    );
+//    canvas.drawImageRect(responses[0], Offset.zero, Paint());
     canvas.drawParagraph(p, Offset(30.0, 30.0));
 
     final picture = recorder.endRecording();
-    final pngBytes = await picture.toImage(CANVAS_WIDTH ~/ 1, CANVAS_HEIGHT ~/ 1).toByteData(format: ImageByteFormat.png);
+    final pngBytes = await picture
+        .toImage(CANVAS_WIDTH ~/ 1, CANVAS_HEIGHT ~/ 1)
+        .toByteData(format: ImageByteFormat.png);
 
     if (!this.mounted) {
       return;
@@ -178,7 +190,8 @@ class _ImageCanvasState extends State<_ImageCanvas> {
       _loading = false;
     });
 
-    await platform.invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
+    await platform
+        .invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
   }
 
   @override

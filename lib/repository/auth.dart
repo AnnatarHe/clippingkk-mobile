@@ -39,4 +39,18 @@ class AuthRepository extends KKHttpClient {
     AppConfig.uid = u.id;
     return u;
   }
+
+  Future<UserProfileItem> loadProfile(int uid) async {
+    final _resp = await this.client.get('/auth/$uid');
+    final response = HttpResponse.fromJSON(_resp.data);
+
+    if (response.status != 200) {
+      final err = KKHttpError(msg: response.msg);
+      return Future.error(err);
+    }
+    print(response.data);
+    return UserProfileItem.fromJSON(response.data);
+
+
+  }
 }
