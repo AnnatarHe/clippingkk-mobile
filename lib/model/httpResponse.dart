@@ -19,11 +19,28 @@ class ClippingItem {
   final int sequence;
 
   ClippingItem.fromJSON(dynamic json)
-    : id = json["id"],
-      title = json['title'],
-      content = json['content'],
-      bookId = json['bookId'],
-      pageAt = json['pageAt'],
-      createdBy = json['createdBy'],
-      sequence = json['seq'];
+      : id = json["id"],
+        title = json['title'],
+        content = json['content'],
+        bookId = json['bookId'],
+        pageAt = json['pageAt'],
+        createdBy = json['createdBy'],
+        sequence = json['seq'];
+}
+
+class VersionItem {
+  final int id;
+  final String platform;
+  final String url;
+  final int version;
+  final String info;
+  final String createdAt;
+
+  VersionItem.fromJSON(dynamic json)
+      : id = json['id'],
+        platform = json['platform'],
+        url = json['url'],
+        version = json['version'],
+        info = json['info'],
+        createdAt = json['createdAt'];
 }

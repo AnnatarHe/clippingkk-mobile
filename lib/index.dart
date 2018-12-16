@@ -1,10 +1,12 @@
 import 'package:ClippingKK/components/appbar-title.dart';
+import 'package:ClippingKK/repository/misc.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './pages/home.dart';
 import 'package:ClippingKK/pages/profile/profile.dart';
 import './pages/squre.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -23,6 +25,17 @@ class IndexPageState extends State<IndexPage> {
     super.initState();
 
     Future.delayed(const Duration(microseconds: 100), () { _checkAuth(); });
+    MiscRepository().checkUpdate().then((response) async {
+      print(response);
+      if (response.length == 0) {
+        return;
+      }
+
+      final url = response[0].url;
+      if (await canLaunch(url)) {
+        await launch(url);
+      }
+    });
   }
 
   void _checkAuth() async {

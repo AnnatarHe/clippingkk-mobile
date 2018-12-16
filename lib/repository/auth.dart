@@ -50,7 +50,5 @@ class AuthRepository extends KKHttpClient {
     }
     print(response.data);
     return UserProfileItem.fromJSON(response.data);
-
-
   }
 }

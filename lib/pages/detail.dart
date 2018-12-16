@@ -81,23 +81,29 @@ class DetailPageState extends State<DetailPage> {
               image: DecorationImage(
                   image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
-            child: Center(
-                child: RepaintBoundary(
-                    key: previewContainer,
-                    child: Card(
-                      margin: const EdgeInsets.all(10.0),
-                      child: Column(
-                        children: <Widget>[
-//                          _ImageCanvas(bookInfo: this._bookInfo),
-                          ClippingContentText(
-                              content: this.widget.item.content),
-                          Text(author)
-                        ],
-                      ),
-                    ))),
+            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+            child: Container(
+              alignment: Alignment.center,
+              child: ConstrainedBox(
+                constraints: BoxConstraints.expand(),
+              child: SizedBox(
+                width: 100,
+                height: 200,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    Card(
+                      margin: const EdgeInsets.all(40.0),
+                      child: ClippingContentText(
+                        content: this.widget.item.content),
+                    )
+                  ],
+                ),
+              )),
+            )
+            ),
           ),
-        ));
+        );
   }
 }
 
