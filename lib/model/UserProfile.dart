@@ -1,4 +1,3 @@
-
 import 'package:ClippingKK/model/httpClient.dart';
 import 'package:scoped_model/scoped_model.dart';
 
