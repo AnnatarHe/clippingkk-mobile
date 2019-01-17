@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-const _take_pre_page = 5;
+const _take_pre_page = 10;
 
 class _MyHomePageState extends State<HomePage> {
   List<ClippingItem> _clippingItems = [];
