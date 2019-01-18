@@ -70,40 +70,40 @@ class DetailPageState extends State<DetailPage> {
     final author = _bookInfo != null ? _bookInfo.author : '佚名';
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.item.title),
-          actions: <Widget>[
-            IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
-          ],
-        ),
-        body: Container(
-          decoration: BoxDecoration(
+      appBar: AppBar(
+        title: Text(widget.item.title),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
+        ],
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(
               image: DecorationImage(
-                  image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-            child: Container(
-              alignment: Alignment.center,
-              child: ConstrainedBox(
-                constraints: BoxConstraints.expand(),
-              child: SizedBox(
-                width: 100,
-                height: 200,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    Card(
-                      margin: const EdgeInsets.all(40.0),
-                      child: ClippingContentText(
-                        content: this.widget.item.content),
-                    )
-                  ],
-                ),
-              )),
-            )
+                image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                decoration: BoxDecoration(color: Colors.black.withOpacity(0.1)),
+              ),
             ),
           ),
-        );
+          Container(
+            child: Container(
+              alignment: Alignment.center,
+              child: Card(
+                margin: const EdgeInsets.all(40.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ClippingContentText(
+                    content: this.widget.item.content,
+                    author: author)))),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -177,8 +177,7 @@ class _ImageCanvasState extends State<_ImageCanvas> {
       bg,
       Rect.fromLTWH(0.0, 0.0, bg.width.toDouble(), bg.height.toDouble()),
       Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT),
-      Paint()
-    );
+      Paint());
 //    canvas.drawImageRect(responses[0], Offset.zero, Paint());
     canvas.drawParagraph(p, Offset(30.0, 30.0));
 

@@ -1,16 +1,7 @@
 import 'package:ClippingKK/model/httpResponse.dart';
 import 'package:ClippingKK/pages/detail.dart';
 import 'package:flutter/material.dart';
-
-const _contentTextStyle = TextStyle(
-  fontSize: 16.0,
-  color: Color.fromRGBO(0, 0, 0, 1.0),
-);
-
-const _titleTextStyle = TextStyle(
-  fontSize: 16.0,
-  color: Color.fromRGBO(0, 0, 0, 1.0),
-);
+import 'package:ClippingKK/styles/clipping.dart' as styles;
 
 class CardClipping extends StatelessWidget {
   final ClippingItem item;
@@ -30,15 +21,20 @@ class CardClipping extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
+
               children: <Widget>[
-                Text(
-                  item.content,
-                  style: _contentTextStyle
+
+                Container(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Text(
+                    item.content,
+                    style: styles.ContentTextStyle,
+                  ),
                 ),
                 Text(
                   '—— 【${item.title}】',
                   textAlign: TextAlign.right,
-                  style: _titleTextStyle
+                  style: styles.TitleTextStyle
                 )
               ],
             ),
