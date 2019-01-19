@@ -12,7 +12,8 @@ class HomePage extends StatefulWidget {
 
 const _take_pre_page = 10;
 
-class _MyHomePageState extends State<HomePage> {
+class _MyHomePageState extends State<HomePage>
+  with AutomaticKeepAliveClientMixin<HomePage> {
   List<ClippingItem> _clippingItems = [];
   ScrollController _listViewController = ScrollController();
 
@@ -34,6 +35,7 @@ class _MyHomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    print(this.wantKeepAlive);
     super.dispose();
     _listViewController.dispose();
   }
@@ -75,4 +77,7 @@ class _MyHomePageState extends State<HomePage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

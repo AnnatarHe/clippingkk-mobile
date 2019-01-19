@@ -15,16 +15,25 @@ class IndexPage extends StatefulWidget {
   }
 }
 
-class IndexPageState extends State<IndexPage> {
+class IndexPageState extends State<IndexPage>
+  with TickerProviderStateMixin<IndexPage> {
   int _currentIndex = 0;
+  TabController _controller;
 
-  List<Widget> _tabs = [];
+  List<Widget> _tabs = [
+    HomePage(),
+    SqurePage(),
+    ProfilePage(),
+  ];
 
   @override
   initState() {
     super.initState();
+    this._controller = new TabController(length: _tabs.length, vsync: this);
 
-    Future.delayed(const Duration(microseconds: 100), () { _checkAuth(); });
+    Future.delayed(const Duration(microseconds: 100), () {
+      _checkAuth();
+    });
     MiscRepository().checkUpdate().then((response) async {
       print(response);
       if (response.length == 0) {
@@ -46,27 +55,22 @@ class IndexPageState extends State<IndexPage> {
     return;
   }
 
-  Widget _getBody() {
-    if (_tabs.length == 0) {
-      _tabs.addAll([
-        HomePage(),
-        SqurePage(),
-        ProfilePage(),
-      ]);
-    }
-
-    return _tabs[_currentIndex];
-  }
-
   void _changeTab(int index) {
     setState(() {
       _currentIndex = index;
+      _controller.animateTo(index,
+        duration: new Duration(milliseconds: 1), curve: Curves.ease);
     });
   }
 
-  Widget _childBuilder(BuildContext context, Widget child, GlobalAppConfig model) {
+  Widget _childBuilder(BuildContext context, Widget child,
+    GlobalAppConfig model) {
     if (model.jwtToken != "") {
-      return this._getBody();
+      return TabBarView(
+        children: _tabs,
+        controller: _controller,
+        physics: new NeverScrollableScrollPhysics(),
+      );
     }
 
     return Center(child: Text("Login please"));
@@ -76,36 +80,39 @@ class IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return ScopedModel<GlobalAppConfig>(
       model: GlobalAppConfig(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: AppBarTitle(tabIndex: this._currentIndex),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.directions_run),
-              onPressed: () { Navigator.pushNamed(context, "/auth"); },
-            )
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance),
-              title: Text('Square'),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.face),
-              title: Text('Profile'),
-            ),
-          ],
-          currentIndex: _currentIndex,
-          onTap: _changeTab,
-        ),
-        body: ScopedModelDescendant<GlobalAppConfig>(builder: this._childBuilder)
-      )
-    );
+      child: DefaultTabController(
+        length: _tabs.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: AppBarTitle(tabIndex: this._currentIndex),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.directions_run),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/auth");
+                },
+              )
+            ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                title: Text('Home'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_balance),
+                title: Text('Square'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.face),
+                title: Text('Profile'),
+              ),
+            ],
+            currentIndex: _currentIndex,
+            onTap: _changeTab,
+          ),
+          body: ScopedModelDescendant<GlobalAppConfig>(
+            builder: this._childBuilder))));
   }
 }

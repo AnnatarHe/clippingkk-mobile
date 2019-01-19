@@ -50,13 +50,17 @@ class ProfileContent extends StatelessWidget {
 }
 
 
-class ProfileState extends State<ProfilePage> {
+class ProfileState extends State<ProfilePage>
+  with AutomaticKeepAliveClientMixin<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GlobalAppConfig>(
       builder: (context, child, model) => model.jwtToken == "" ? _LoginFirstPage(onGotJWT: model.update) : ProfileContent()
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class ProfilePage extends StatefulWidget {
