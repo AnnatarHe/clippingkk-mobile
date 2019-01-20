@@ -1,4 +1,5 @@
 
+
 class DoubanBookInfo {
   String rating;
   String image;
@@ -9,7 +10,7 @@ class DoubanBookInfo {
     : rating = data['rating']['average'],
       image = data['image'],
       ebookURL = data['ebook_url'] {
-        final _authors = data['authors'];
+    final List<String> _authors = List<String>.from(data['author']);
         author = _authors != null ? _authors.join(',') : '佚名';
       }
 }
