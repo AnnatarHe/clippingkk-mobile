@@ -8,7 +8,6 @@ class ClippingsAPI extends KKHttpClient {
   Future<List<ClippingItem>> getClippings(int take, int offset) async {
     HttpResponse result;
     try {
-      print(AppConfig.uid);
       final _resp = await this.client.get('/clippings/clippings/${AppConfig.uid}', data: {
         'take': take,
         'from': offset
