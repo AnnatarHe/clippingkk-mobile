@@ -18,8 +18,13 @@ class _OnInit {
   }
 
   Future<void> preLoadUserInfo() async {
-    final jwt = await FlutterSecureStorage().read(key: 'jwt');
-    final uid = await FlutterSecureStorage().read(key: 'uid');
+    final result = await Future.wait([
+      FlutterSecureStorage().read(key: 'jwt'),
+      FlutterSecureStorage().read(key: 'uid')
+    ]);
+
+    final jwt = result[0];
+    final uid = result[1];
     AppConfig.jwtToken = jwt == null ? "" : jwt;
     AppConfig.uid = uid != null ? int.parse(uid) : -1;
   }
