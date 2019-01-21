@@ -40,40 +40,79 @@ class _MyHomePageState extends State<HomePage>
     _listViewController.dispose();
   }
 
-  void loadData() {
-    if (_loading || !_hasMore) {
-      return;
+  Future<void> loadData() {
+    if (!_hasMore) {
+      Scaffold.of(this.context).showSnackBar(
+        SnackBar(content: Text("没有更多啦~"),
+          action: SnackBarAction(label: "top", onPressed: () {
+            _listViewController.animateTo(
+              0.0, duration: Duration(milliseconds: 350),
+              curve: Curves.easeInOut);
+          }),)
+      );
+      return Future.value(null);
+    }
+
+    if (_loading) {
+      return Future.value(null);
     }
 
     setState(() {
       _loading = true;
     });
 
-    ClippingsAPI().getClippings(_take_pre_page, _offset).then((result) {
+    return ClippingsAPI().getClippings(_take_pre_page, _offset).then((result) {
       setState(() {
         _loading = false;
         _hasMore = result.length != 0;
         _offset += _take_pre_page;
         _clippingItems.addAll(result);
       });
-    }).catchError(() {
+      return Future.value(null);
+    }).catchError((err) {
       setState(() {
         _loading = false;
       });
+      return Future.error(err);
     });
+  }
+
+  Future<void> _onRefresh() {
+    setState(() {
+      _clippingItems.clear();
+      _offset = 0;
+      _hasMore = true;
+    });
+
+    return this.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       body: Container(
-        child: ListView.builder(
-          controller: _listViewController,
-          itemCount: this._clippingItems.length,
-          itemBuilder: (ctx, index) {
-            return CardClipping(item: _clippingItems[index]);
-          },
-        ),
+        color: Color(0xfffafcff),
+        child: RefreshIndicator(
+          child: ListView.builder(
+            controller: _listViewController,
+            itemCount: this._clippingItems.length + 1,
+            itemBuilder: (ctx, index) {
+              if (index < _clippingItems.length) {
+                return CardClipping(item: _clippingItems[index]);
+              }
+              return Center(
+                child: Opacity(
+                  opacity: (_loading && this._clippingItems.length > 0)
+                    ? 1.0
+                    : 0.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: CircularProgressIndicator(),
+                  )
+                ));
+            },
+          ),
+          onRefresh: this._onRefresh),
       ),
     );
   }

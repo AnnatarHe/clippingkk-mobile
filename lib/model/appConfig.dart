@@ -7,6 +7,7 @@ class AppConfig {
   static int uid = -1;
   // static bool isDev = bool.fromEnvironment("dart.vm.product");
   static bool isDev = false;
+  static bool debugMode = bool.fromEnvironment('flutter.debug');
   static final String httpPrefix = "https://api.clippingkk.annatarhe.com/api";
 
   // static final String httpPrefix = isDev
