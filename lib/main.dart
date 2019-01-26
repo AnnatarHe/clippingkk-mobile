@@ -1,7 +1,9 @@
 import 'package:ClippingKK/model/appConfig.dart';
+import 'package:ClippingKK/pages/about.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ClippingKK/utils/reporter.dart';
+import 'package:ClippingKK/pages/setting.dart';
 import './index.dart';
 import './pages/auth.dart';
 
@@ -53,7 +55,9 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => IndexPage(),
-        '/auth': (context) => AuthPage()
+        '/auth': (context) => AuthPage(),
+        '/setting': (context) => SettingPage(),
+        '/about': (context) => AboutPage()
       },
     );
   }

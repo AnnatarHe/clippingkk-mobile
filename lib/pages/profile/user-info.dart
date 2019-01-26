@@ -21,7 +21,7 @@ class ProfileContainer extends StatelessWidget {
             color: Color(0xffb0b1b9),
             height: 16.0,
           ),
-          Text("TODO")
+          KKPlaceholder()
         ],
       ),
     );

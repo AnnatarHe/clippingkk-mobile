@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ClippingKK/styles/profile.dart' as profileStyle;
 import 'package:ClippingKK/model/httpClient.dart' as model;
 
 class BasicInfo extends StatelessWidget {
@@ -9,7 +10,7 @@ class BasicInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: <Widget>[
@@ -18,10 +19,14 @@ class BasicInfo extends StatelessWidget {
               width: 100,
               height: 100,
             ),
-            Padding(
+            Container(
+              alignment: Alignment.centerLeft,
               padding: const EdgeInsets.only(left: 20),
               child: Column(
-                children: <Widget>[Text(user.name), Text(user.email)],
+                children: <Widget>[
+                  Text(user.name, style: profileStyle.profileUsernameStyle), 
+                  Text(user.email)
+                ],
               ),
             )
           ],

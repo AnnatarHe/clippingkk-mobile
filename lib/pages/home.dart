@@ -1,4 +1,5 @@
 import 'package:ClippingKK/components/card-clipping.dart';
+import 'package:ClippingKK/components/loading-item.dart';
 import 'package:ClippingKK/repository/clippings.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
@@ -100,16 +101,7 @@ class _MyHomePageState extends State<HomePage>
               if (index < _clippingItems.length) {
                 return CardClipping(item: _clippingItems[index]);
               }
-              return Center(
-                child: Opacity(
-                  opacity: (_loading && this._clippingItems.length > 0)
-                    ? 1.0
-                    : 0.0,
-                  child: Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: CircularProgressIndicator(),
-                  )
-                ));
+              return LoadingItem(visible: _loading && this._clippingItems.length > 0);
             },
           ),
           onRefresh: this._onRefresh),

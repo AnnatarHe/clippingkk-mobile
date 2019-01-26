@@ -23,18 +23,21 @@ class AuthContentState extends State<AuthContent> {
     final pwd = pwdInputController.text;
     if (email.isEmpty || pwd.isEmpty) {
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("email or password are empty")));
+          .showSnackBar(
+            SnackBar(
+              content: Text("email or password are empty")
+            )
+          );
       return;
     }
 
     try {
       User u = await AuthRepository().login(email, pwd);
       Navigator.pop(context, u);
-    } on KKHttpError catch(err) {
+    } on KKHttpError catch (err) {
       Scaffold.of(context)
-        .showSnackBar(SnackBar(content: Text(err.toString())));
+          .showSnackBar(SnackBar(content: Text(err.toString())));
     }
-
   }
 
   @override
@@ -44,13 +47,13 @@ class AuthContentState extends State<AuthContent> {
           inputController: emailInputController, label: _inputType.email),
       _InputItem(inputController: pwdInputController, label: _inputType.pwd),
       Expanded(
-        child: MaterialButton(
-          minWidth: 300.0,
-          color: Theme.of(context).primaryColor,
-          child: Text("Submit", style: TextStyle(color: Colors.white)),
-          onPressed: () {
-            this._tryToLogin(context);
-          }))
+          child: MaterialButton(
+              minWidth: 300.0,
+              color: Theme.of(context).primaryColor,
+              child: Text("Submit", style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                this._tryToLogin(context);
+              }))
     ]);
   }
 }

@@ -21,9 +21,7 @@ class CardClipping extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-
               children: <Widget>[
-
                 Container(
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Text(
