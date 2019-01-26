@@ -10,6 +10,6 @@ class SqureState extends State<SqurePage> {
 class SqurePage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new SqureState();
+    return SqureState();
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../model/httpClient.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
 import 'package:ClippingKK/model/httpError.dart';
+import 'package:ClippingKK/utils/reporter.dart';
 import '../model/appConfig.dart';
 
 class AuthRepository extends KKHttpClient {
@@ -17,23 +18,28 @@ class AuthRepository extends KKHttpClient {
       });
 
       response = HttpResponse.fromJSON(_resp.data);
-    } on DioError catch(e) {
-      print(e);
+    } on DioError catch(e, stackTrace) {
+      Reporter().capture(e, stackTrace);
       return null;
     }
 
     if (response.status != 200) {
-      return throw new KKHttpError(
-        msg: response.msg
-      );
+      return Future.error(KKHttpError( msg: response.msg));
     }
+
     String token = response.data["token"];
     this.updateJWTToken(token);
     User u = User.fromJSON(response.data["profile"]);
     u.jwtToken = token;
 
-    FlutterSecureStorage().write(key: "jwt", value: token);
-    FlutterSecureStorage().write(key: "uid", value: u.id.toString());
+    if (!u.checked) {
+      return Future.error(KKHttpError(msg: "请先到邮箱确认哦~"));
+    }
+
+    Future.wait([
+      FlutterSecureStorage().write(key: "jwt", value: token),
+      FlutterSecureStorage().write(key: "uid", value: u.id.toString())
+    ]);
 
     AppConfig.jwtToken = token;
     AppConfig.uid = u.id;
@@ -48,7 +54,6 @@ class AuthRepository extends KKHttpClient {
       final err = KKHttpError(msg: response.msg);
       return Future.error(err);
     }
-    print(response.data);
     return UserProfileItem.fromJSON(response.data);
   }
 }

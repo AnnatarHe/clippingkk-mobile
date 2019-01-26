@@ -9,19 +9,18 @@ import '../../model/appConfig.dart';
 class _LoginFirstPage extends StatelessWidget {
   void Function(String token, int uid) onGotJWT;
 
-  _LoginFirstPage({ this.onGotJWT });
+  _LoginFirstPage({this.onGotJWT});
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(
-        child: Card(
-          child: IconButton(
-            icon: Icon(Icons.lock),
-            onPressed: () => onPressBtnPressed(context),
-          ),
+        child: Center(
+      child: Card(
+        child: IconButton(
+          icon: Icon(Icons.lock),
+          onPressed: () => onPressBtnPressed(context),
         ),
-      )
-    );
+      ),
+    ));
   }
 
   void onPressBtnPressed(BuildContext context) async {
@@ -41,22 +40,18 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<UserProfile>(
-      model: profileModel,
-      child: UserInfo()
-    );
-
+    return ScopedModel<UserProfile>(model: profileModel, child: UserInfo());
   }
 }
 
-
 class ProfileState extends State<ProfilePage>
-  with AutomaticKeepAliveClientMixin<ProfilePage> {
+    with AutomaticKeepAliveClientMixin<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<GlobalAppConfig>(
-      builder: (context, child, model) => model.jwtToken == "" ? _LoginFirstPage(onGotJWT: model.update) : ProfileContent()
-    );
+        builder: (context, child, model) => model.jwtToken == ""
+            ? _LoginFirstPage(onGotJWT: model.update)
+            : ProfileContent());
   }
 
   @override

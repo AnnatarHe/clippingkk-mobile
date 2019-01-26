@@ -20,6 +20,6 @@ class AuthState extends State<AuthPage> {
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new AuthState();
+    return AuthState();
   }
 }

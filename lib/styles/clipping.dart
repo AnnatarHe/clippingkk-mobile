@@ -1,11 +1,12 @@
+import 'package:ClippingKK/styles/variables.dart';
 import 'package:flutter/material.dart';
 
 const ContentTextStyle = TextStyle(
   fontSize: 20.0,
-  color: Color(0xff434759),
+  color: black,
 );
 
 const TitleTextStyle = TextStyle(
   fontSize: 14.0,
-  color: Color(0xffb0b1b9),
+  color: grey,
 );

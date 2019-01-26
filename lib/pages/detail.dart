@@ -148,8 +148,11 @@ class _ImageCanvasState extends State<_ImageCanvas> {
     final recorder = new PictureRecorder();
     final canvas = new Canvas(
         recorder,
-        new Rect.fromPoints(
-            new Offset(0.0, 0.0), new Offset(CANVAS_WIDTH, CANVAS_HEIGHT)));
+        Rect.fromPoints(
+            Offset(0.0, 0.0),
+            Offset(CANVAS_WIDTH, CANVAS_HEIGHT)
+        )
+    );
 
     final paint = new Paint()
       ..color = Colors.teal
