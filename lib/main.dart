@@ -3,6 +3,7 @@ import 'package:ClippingKK/pages/about.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ClippingKK/utils/reporter.dart';
+import 'package:ClippingKK/utils/logger.dart';
 import 'package:ClippingKK/pages/setting.dart';
 import './index.dart';
 import './pages/auth.dart';
@@ -39,6 +40,7 @@ class _OnInit {
 
 void main() async {
   await _OnInit().execute();
+  KKLogger().getLogger().fine("app start");
   runApp(new MyApp());
 }
 

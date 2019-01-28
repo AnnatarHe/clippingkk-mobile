@@ -27,6 +27,7 @@ dependencies:
   scoped_model: ^1.0.1
   url_launcher: ^4.0.2
   sentry: any
+  logging: any
 
 dev_dependencies:
   flutter_test:
