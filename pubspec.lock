@@ -49,7 +49,7 @@ packages:
       name: dio
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.13"
+    version: "1.0.17"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -68,7 +68,7 @@ packages:
       name: flutter_secure_storage
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.1.2"
+    version: "3.2.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -211,7 +211,7 @@ packages:
       name: url_launcher
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.3"
+    version: "4.2.0+3"
   usage:
     dependency: transitive
     description:
