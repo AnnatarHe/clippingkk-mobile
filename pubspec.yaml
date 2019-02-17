@@ -28,6 +28,7 @@ dependencies:
   url_launcher: ^4.0.2
   sentry: any
   logging: any
+  image: 2.0.7
 
 dev_dependencies:
   flutter_test:

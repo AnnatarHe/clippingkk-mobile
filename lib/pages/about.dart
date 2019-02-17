@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return KKPlaceholder();
+    return Scaffold(
+      appBar: AppBar(title: Text('About')),
+      body: KKPlaceholder(),
+    );
   }
 }

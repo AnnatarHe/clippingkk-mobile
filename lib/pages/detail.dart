@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'dart:core';
 import 'dart:async';
 import 'package:ClippingKK/components/clipping-content-text.dart';
@@ -11,10 +11,21 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:ui' as ui;
+import 'dart:io';
+import 'package:image/image.dart' as imgPack;
+import '../utils/logger.dart';
+
+const _shareBackgroundImages = [
+  'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm3nz77j20u01hcdr5.jpg',
+  'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm3e6h1j20u01hcdpm.jpg',
+  'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm435utj20u01hcgwg.jpg',
+  'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm47mh2j20u01hc4dq.jpg',
+];
+
+const _websiteQRCode = 'https://kindle.annatarhe.com/website-qrcode-6881260f2987665566b88c7cd62746f7.png';
 
 const _defaultBackgroundImage =
-    'https://kindle.annatarhe.com/coffee-d3ec79a0efd30ac2704aa2f26e72cb28.jpg';
+  'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm47mh2j20u01hc4dq.jpg';
 
 const CANVAS_HEIGHT = 1920.0;
 const CANVAS_WIDTH = 1080.0;
@@ -38,6 +49,7 @@ class DetailPageState extends State<DetailPage> {
   static GlobalKey previewContainer = new GlobalKey();
 
   DoubanBookInfo _bookInfo;
+  ByteData png;
 
   @override
   void initState() {
@@ -52,15 +64,20 @@ class DetailPageState extends State<DetailPage> {
     });
   }
 
-  void _saveScreenshot() async {
-    RenderRepaintBoundary boundary =
-        previewContainer.currentContext.findRenderObject();
-    ui.Image image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData.buffer.asUint8List();
+  void _saveScreenshot(BuildContext context) async {
+    _ShareImageRender shareImage = _ShareImageRender(
+      author: this._bookInfo.author,
+      content: this.widget.item.content,
+      bookTitle: this.widget.item.title
+    );
+    final image = await shareImage.buildImage();
 
-    await platform
-        .invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
+    setState(() {
+      png = image;
+    });
+    await shareImage.saveImage(image);
+
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text('done~')));
   }
 
   @override
@@ -73,7 +90,8 @@ class DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text(widget.item.title),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.image), onPressed: this._saveScreenshot)
+          IconButton(icon: Icon(Icons.image),
+            onPressed: () => this._saveScreenshot(context))
         ],
       ),
       body: Stack(
@@ -84,7 +102,7 @@ class DetailPageState extends State<DetailPage> {
               image: DecorationImage(
                 image: NetworkImage(backgroundImage), fit: BoxFit.cover)),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              filter: ui.ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
                 decoration: BoxDecoration(color: Colors.black.withOpacity(0.1)),
               ),
@@ -99,7 +117,8 @@ class DetailPageState extends State<DetailPage> {
                   padding: const EdgeInsets.all(10.0),
                   child: ClippingContentText(
                     content: this.widget.item.content,
-                    author: author)))),
+                    author: author)
+                ))),
           )
         ],
       ),
@@ -107,33 +126,23 @@ class DetailPageState extends State<DetailPage> {
   }
 }
 
-class _ImageCanvas extends StatefulWidget {
-  _ImageCanvas({Key key, this.bookInfo}) : super(key: key);
-
-  DoubanBookInfo bookInfo;
-
-  @override
-  _ImageCanvasState createState() {
-    return new _ImageCanvasState();
-  }
-}
-
 // flutter 的 canvas 不能在 gpu 情况下正常渲染 drawImage
 // https://github.com/flutter/flutter/issues/23621
-class _ImageCanvasState extends State<_ImageCanvas> {
+class _ShareImageRender {
   static const platform =
       const MethodChannel('com.annatarhe.clippingkk/channel');
 
-  static GlobalKey previewContainer = new GlobalKey();
+  final grep = 100.0;
 
-  bool _loading = true;
-  ByteData _img;
+  final String author;
+  final String content;
+  final String bookTitle;
 
-  @override
-  void initState() {
-    super.initState();
-    this._buildImage();
-  }
+  _ShareImageRender({
+    @required this.author,
+    @required this.content,
+    @required this.bookTitle
+  });
 
   Future<ui.Image> _loadImageAssets(String url) async {
     final _image = await http.readBytes(url);
@@ -144,8 +153,8 @@ class _ImageCanvasState extends State<_ImageCanvas> {
     return img;
   }
 
-  void _buildImage() async {
-    final recorder = new PictureRecorder();
+  Future<ByteData> buildImage() async {
+    final recorder = new ui.PictureRecorder();
     final canvas = new Canvas(
         recorder,
         Rect.fromPoints(
@@ -154,59 +163,46 @@ class _ImageCanvasState extends State<_ImageCanvas> {
         )
     );
 
-    final paint = new Paint()
-      ..color = Colors.teal
-      ..style = PaintingStyle.fill;
-
     final responses = await Future.wait([
       this._loadImageAssets(_defaultBackgroundImage),
+      this._loadImageAssets(_websiteQRCode)
     ]);
-
-    canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT), paint);
-
-    final _paragraph = ParagraphBuilder(
-        ParagraphStyle(textAlign: TextAlign.left, fontSize: 24.0));
-    _paragraph.addText('heelo jdklfjasdklfje');
+    final _paragraph = ui.ParagraphBuilder(
+      ui.ParagraphStyle(textAlign: TextAlign.left, fontSize: 64.0));
+    _paragraph.addText(this.content);
     final p = _paragraph.build();
-    p.layout(ParagraphConstraints(width: 100.0));
-    // not working
-    canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, 200.0, 200.0), Paint()..color = Colors.amber);
-    print(responses[0].width);
-    print(responses[0].height);
-    final bg = responses[0];
+    p.layout(ui.ParagraphConstraints(width: CANVAS_WIDTH - grep * 2));
+    canvas.drawImage(responses[0], Offset.zero, Paint());
+    canvas.drawParagraph(p, Offset(grep, grep));
+
+    final bookText = ui.ParagraphBuilder(
+      ui.ParagraphStyle(textAlign: TextAlign.right, fontSize: 48.0)
+    );
+    bookText.addText(this.bookTitle + '\n' + this.author);
+    final bookTextParagraph = bookText.build();
+    bookTextParagraph.layout(
+      ui.ParagraphConstraints(width: CANVAS_WIDTH - grep * 2));
+    canvas.drawParagraph(
+      bookTextParagraph, Offset(grep, CANVAS_HEIGHT - grep * 4));
+
     canvas.drawImageRect(
-      bg,
-      Rect.fromLTWH(0.0, 0.0, bg.width.toDouble(), bg.height.toDouble()),
-      Rect.fromLTWH(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT),
+      responses[1],
+      Rect.fromLTWH(
+        0, 0, responses[1].width.toDouble(), responses[1].height.toDouble()),
+      Rect.fromLTWH(CANVAS_WIDTH - 250, CANVAS_HEIGHT - 200, 150, 150),
       Paint());
-//    canvas.drawImageRect(responses[0], Offset.zero, Paint());
-    canvas.drawParagraph(p, Offset(30.0, 30.0));
 
     final picture = recorder.endRecording();
-    final pngBytes = await picture
+    final pngBytes = (
+      await picture
         .toImage(CANVAS_WIDTH ~/ 1, CANVAS_HEIGHT ~/ 1)
-        .toByteData(format: ImageByteFormat.png);
+    ).toByteData(format: ui.ImageByteFormat.png);
 
-    if (!this.mounted) {
-      return;
-    }
-
-    setState(() {
-      _img = pngBytes;
-      _loading = false;
-    });
-
-    await platform
-        .invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
+    return pngBytes;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_loading && _img == null) {
-      return Text('loading');
-    }
-    return Image.memory(new Uint8List.view(this._img.buffer));
+  Future<dynamic> saveImage(ByteData pngBytes) {
+    return platform
+        .invokeMethod("saveImage", {'image': pngBytes.buffer.asUint8List()});
   }
 }
