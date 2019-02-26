@@ -1,4 +1,5 @@
 import 'package:ClippingKK/components/appbar-title.dart';
+import 'package:ClippingKK/pages/home-book.dart';
 import 'package:ClippingKK/repository/misc.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
@@ -21,7 +22,7 @@ class IndexPageState extends State<IndexPage>
   TabController _controller;
 
   List<Widget> _tabs = [
-    HomePage(),
+    HomeBooksPage(),
     SqurePage(),
     ProfilePage(),
   ];

@@ -25,20 +25,23 @@ class _MyHomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    _listViewController.addListener(() {
-      if (_listViewController.position.pixels ==
-          _listViewController.position.maxScrollExtent) {
-        this.loadData();
-      }
-    });
+    _listViewController.addListener(this._listViewLoadMore);
     loadData();
   }
 
+  void _listViewLoadMore() {
+    if (_listViewController.position.pixels ==
+      _listViewController.position.maxScrollExtent) {
+      this.loadData();
+    }
+  }
+
+
   @override
   void dispose() {
-    print(this.wantKeepAlive);
-    super.dispose();
+    _listViewController.removeListener(this._listViewLoadMore);
     _listViewController.dispose();
+    super.dispose();
   }
 
   Future<void> loadData() {
