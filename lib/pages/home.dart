@@ -36,7 +36,6 @@ class _MyHomePageState extends State<HomePage>
     }
   }
 
-
   @override
   void dispose() {
     _listViewController.removeListener(this._listViewLoadMore);

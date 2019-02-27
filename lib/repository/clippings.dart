@@ -48,4 +48,30 @@ class ClippingsAPI extends KKHttpClient {
       .toList();
     return rtn;
   }
+
+  Future<List<ClippingItem>> getClippingsByBook(int userid, String bookId,
+    int offset) async {
+    HttpResponse result;
+    try {
+      final _resp = await this.client.get(
+        '/book/clippings/$userid/$bookId', data: {
+        'take': 20,
+        'from': offset
+      });
+      result = HttpResponse.fromJSON(_resp.data);
+    } on DioError catch (err) {
+      print(err);
+      return List.of([]);
+    }
+
+    if (result.data == null) {
+      return List.of([]);
+    }
+
+    final List<dynamic> list = result.data.toList();
+
+    final List<ClippingItem> rtn = list.map((item) =>
+      ClippingItem.fromJSON(item)).toList();
+    return rtn;
+  }
 }

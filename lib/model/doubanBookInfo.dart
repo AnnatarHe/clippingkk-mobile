@@ -32,7 +32,7 @@ class KKBookInfo {
       rating = data['rating'].toDouble(),
       author = data['author'],
       originTitle = data['originTitle'],
-      image = 'https://cdn.annatarhe.com/${data['image']}-copyright.webp',
+      image = 'https://cdn.annatarhe.com/${data['image']}-copyrightDB.webp',
       doubanId = data['doubanId'],
       title = data['title'],
       url = data['url'],

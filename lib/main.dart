@@ -16,7 +16,9 @@ class _OnInit {
   _OnInit._internal();
 
   Future<void> execute() {
-    this.initSentry();
+    if (!AppConfig.isDev) {
+      this.initSentry();
+    }
     return this.preLoadUserInfo();
   }
 

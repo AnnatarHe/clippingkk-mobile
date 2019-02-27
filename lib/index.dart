@@ -43,7 +43,7 @@ class IndexPageState extends State<IndexPage>
 
       final url = response[0].url;
       if (await canLaunch(url)) {
-        await launch(url);
+//        await launch(url);
       }
     });
   }
