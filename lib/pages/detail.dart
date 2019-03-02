@@ -46,10 +46,11 @@ class DetailPageState extends State<DetailPage> {
   static const platform =
       const MethodChannel('com.annatarhe.clippingkk/channel');
 
-  static GlobalKey previewContainer = new GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   DoubanBookInfo _bookInfo;
   ByteData png;
+  bool _paninting = false;
 
   @override
   void initState() {
@@ -65,10 +66,17 @@ class DetailPageState extends State<DetailPage> {
   }
 
   void _saveScreenshot(BuildContext context) async {
+    if (_paninting) {
+      return;
+    }
+    setState(() {
+      _paninting = true;
+    });
     _ShareImageRender shareImage = _ShareImageRender(
       author: this._bookInfo.author,
       content: this.widget.item.content,
-      bookTitle: this.widget.item.title
+      bookTitle: this.widget.item.title,
+      backgroundUrl: this._bookInfo.image
     );
     final image = await shareImage.buildImage();
 
@@ -77,7 +85,10 @@ class DetailPageState extends State<DetailPage> {
     });
     await shareImage.saveImage(image);
 
-    Scaffold.of(context).showSnackBar(SnackBar(content: Text('done~')));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('done~')));
+    setState(() {
+      _paninting = false;
+    });
   }
 
   @override
@@ -87,6 +98,7 @@ class DetailPageState extends State<DetailPage> {
     final author = _bookInfo != null ? _bookInfo.author : '佚名';
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.item.title),
         actions: <Widget>[
@@ -132,17 +144,32 @@ class _ShareImageRender {
   static const platform =
       const MethodChannel('com.annatarhe.clippingkk/channel');
 
-  final grep = 100.0;
+  ui.PictureRecorder _recorder;
+  Canvas _canvas;
+
+  final _grap = 80.0;
+  final _QRCodeSize = Size(150.0, 150.0);
 
   final String author;
   final String content;
   final String bookTitle;
+  final String backgroundUrl;
 
   _ShareImageRender({
     @required this.author,
     @required this.content,
-    @required this.bookTitle
-  });
+    @required this.bookTitle,
+    @required this.backgroundUrl
+  }) : super() {
+    _recorder = new ui.PictureRecorder();
+    _canvas = new Canvas(
+      _recorder,
+      Rect.fromPoints(
+        Offset(0.0, 0.0),
+        Offset(CANVAS_WIDTH, CANVAS_HEIGHT)
+      )
+    );
+  }
 
   Future<ui.Image> _loadImageAssets(String url) async {
     final _image = await http.readBytes(url);
@@ -153,46 +180,80 @@ class _ShareImageRender {
     return img;
   }
 
-  Future<ByteData> buildImage() async {
-    final recorder = new ui.PictureRecorder();
-    final canvas = new Canvas(
-        recorder,
-        Rect.fromPoints(
-            Offset(0.0, 0.0),
-            Offset(CANVAS_WIDTH, CANVAS_HEIGHT)
-        )
+  Future<Canvas> _setupBackground(ui.Image bgImage) async {
+    _canvas.save();
+    final bgPaint = new Paint();
+    _canvas.drawImageRect(
+      bgImage,
+      Rect.fromLTWH(0, 0, bgImage.width.toDouble(), bgImage.height.toDouble()),
+      Rect.fromLTWH(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT),
+      bgPaint
     );
+    _canvas.restore();
 
-    final responses = await Future.wait([
-      this._loadImageAssets(_defaultBackgroundImage),
-      this._loadImageAssets(_websiteQRCode)
-    ]);
+    _canvas.drawColor(Colors.black54, BlendMode.darken);
+    return _canvas;
+  }
+
+  Future<Canvas> _setupClippingContent() async {
+    _canvas.save();
     final _paragraph = ui.ParagraphBuilder(
       ui.ParagraphStyle(textAlign: TextAlign.left, fontSize: 64.0));
     _paragraph.addText(this.content);
     final p = _paragraph.build();
-    p.layout(ui.ParagraphConstraints(width: CANVAS_WIDTH - grep * 2));
-    canvas.drawImage(responses[0], Offset.zero, Paint());
-    canvas.drawParagraph(p, Offset(grep, grep));
+    p.layout(ui.ParagraphConstraints(width: CANVAS_WIDTH - _grap * 2));
 
+    _canvas.drawParagraph(p, Offset(_grap, _grap));
+    _canvas.restore();
+    return _canvas;
+  }
+
+  Future<Canvas> _setupBookInfo() async {
+    _canvas.save();
     final bookText = ui.ParagraphBuilder(
-      ui.ParagraphStyle(textAlign: TextAlign.right, fontSize: 48.0)
+      ui.ParagraphStyle(textAlign: TextAlign.left, fontSize: 48.0)
     );
     bookText.addText(this.bookTitle + '\n' + this.author);
     final bookTextParagraph = bookText.build();
     bookTextParagraph.layout(
-      ui.ParagraphConstraints(width: CANVAS_WIDTH - grep * 2));
-    canvas.drawParagraph(
-      bookTextParagraph, Offset(grep, CANVAS_HEIGHT - grep * 4));
+      ui.ParagraphConstraints(
+        width: CANVAS_WIDTH - _QRCodeSize.width - _grap * 3));
+    _canvas.drawParagraph(
+      bookTextParagraph, Offset(_grap, CANVAS_HEIGHT - _grap - 200));
+    _canvas.restore();
+    return _canvas;
+  }
 
-    canvas.drawImageRect(
-      responses[1],
+  Future<Canvas> _setupQRCode(ui.Image qrcode) async {
+    _canvas.save();
+    _canvas.drawImageRect(
+      qrcode,
       Rect.fromLTWH(
-        0, 0, responses[1].width.toDouble(), responses[1].height.toDouble()),
-      Rect.fromLTWH(CANVAS_WIDTH - 250, CANVAS_HEIGHT - 200, 150, 150),
+        0, 0, qrcode.width.toDouble(), qrcode.height.toDouble()),
+      Rect.fromLTWH(
+        CANVAS_WIDTH - _QRCodeSize.width - _grap,
+        CANVAS_HEIGHT - _grap - 200,
+        _QRCodeSize.width,
+        _QRCodeSize.height
+      ),
       Paint());
 
-    final picture = recorder.endRecording();
+    _canvas.restore();
+    return _canvas;
+  }
+
+
+  Future<ByteData> buildImage() async {
+    final responses = await Future.wait([
+      this._loadImageAssets(this.backgroundUrl),
+      this._loadImageAssets(_websiteQRCode)
+    ]);
+    await this._setupBackground(responses[0]);
+    await this._setupClippingContent();
+    await this._setupBookInfo();
+    await this._setupQRCode(responses[1]);
+
+    final picture = _recorder.endRecording();
     final pngBytes = (
       await picture
         .toImage(CANVAS_WIDTH ~/ 1, CANVAS_HEIGHT ~/ 1)
