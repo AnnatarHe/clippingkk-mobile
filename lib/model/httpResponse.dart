@@ -32,7 +32,7 @@ class VersionItem {
   final int id;
   final String platform;
   final String url;
-  final int version;
+  final String version;
   final String info;
   final String createdAt;
 

@@ -9,6 +9,7 @@ class AppConfig {
   static bool isDev = true;
   static bool debugMode = bool.fromEnvironment('flutter.debug');
   static final String httpPrefix = "https://api.clippingkk.annatarhe.com/api";
+  // static final String httpPrefix = "http://localhost:9654/api";
 
   // static final String httpPrefix = isDev
   //     ? "http://localhost:9876/api"
