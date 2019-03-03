@@ -49,7 +49,6 @@ class DetailPageState extends State<DetailPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   DoubanBookInfo _bookInfo;
-  ByteData png;
   bool _paninting = false;
 
   @override
@@ -78,17 +77,17 @@ class DetailPageState extends State<DetailPage> {
       bookTitle: this.widget.item.title,
       backgroundUrl: this._bookInfo.image
     );
-    final image = await shareImage.buildImage();
-
-    setState(() {
-      png = image;
-    });
-    await shareImage.saveImage(image);
-
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('done~')));
-    setState(() {
-      _paninting = false;
-    });
+    try {
+      final image = await shareImage.buildImage();
+      await shareImage.saveImage(image);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('done~')));
+    } catch (e) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('error~')));
+    } finally {
+      setState(() {
+        _paninting = false;
+      });
+    }
   }
 
   @override
