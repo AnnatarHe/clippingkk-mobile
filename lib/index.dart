@@ -42,14 +42,14 @@ class IndexPageState extends State<IndexPage>
       }
 
       final latestVersion = response[0];
-      if (latestVersion.version == "1.0.1") {
+      if (latestVersion.version == "1.0.0") {
         return;
       }
 
       final url = latestVersion.url;
 
       if (await canLaunch(url)) {
-//        await launch(url);
+        await launch(url);
       }
     });
   }
