@@ -1,5 +1,6 @@
 import 'package:ClippingKK/components/appbar-title.dart';
 import 'package:ClippingKK/pages/home-book.dart';
+import 'package:ClippingKK/components/navigation-icon.dart';
 import 'package:ClippingKK/repository/misc.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
@@ -36,12 +37,17 @@ class IndexPageState extends State<IndexPage>
       _checkAuth();
     });
     MiscRepository().checkUpdate().then((response) async {
-      print(response);
       if (response.length == 0) {
         return;
       }
 
-      final url = response[0].url;
+      final latestVersion = response[0];
+      if (latestVersion.version == "1.0.1") {
+        return;
+      }
+
+      final url = latestVersion.url;
+
       if (await canLaunch(url)) {
 //        await launch(url);
       }
@@ -64,8 +70,11 @@ class IndexPageState extends State<IndexPage>
     });
   }
 
-  Widget _childBuilder(BuildContext context, Widget child,
-    GlobalAppConfig model) {
+  Widget _childBuilder(
+    BuildContext context,
+    Widget child,
+    GlobalAppConfig model
+  ) {
     if (model.jwtToken != "") {
       return TabBarView(
         children: _tabs,
@@ -87,12 +96,7 @@ class IndexPageState extends State<IndexPage>
           appBar: AppBar(
             title: AppBarTitle(tabIndex: this._currentIndex),
             actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.directions_run),
-                onPressed: () {
-                  Navigator.pushNamed(context, "/auth");
-                },
-              )
+              NavigationRightIcon()
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
