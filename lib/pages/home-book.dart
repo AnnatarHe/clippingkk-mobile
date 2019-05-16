@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:ClippingKK/components/loading-item.dart';
 import 'package:ClippingKK/model/appConfig.dart';
 
-class HomeBooksPage extends StatefulWidget {
+class HomeBooksPage extends StatefulWidget  {
   @override
   _HomeBooksPageState createState() => _HomeBooksPageState();
 }
 
-class _HomeBooksPageState extends State<HomeBooksPage> {
+class _HomeBooksPageState extends State<HomeBooksPage> with AutomaticKeepAliveClientMixin<HomeBooksPage>{
   bool _loading = false;
   int _offset = 0;
   bool _hasMore = true;

@@ -40,6 +40,7 @@ class ProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("build profile content render");
     return ScopedModel<UserProfile>(model: profileModel, child: UserInfo());
   }
 }
@@ -51,7 +52,8 @@ class ProfileState extends State<ProfilePage>
     return ScopedModelDescendant<GlobalAppConfig>(
         builder: (context, child, model) => model.jwtToken == ""
             ? _LoginFirstPage(onGotJWT: model.update)
-            : ProfileContent());
+            : ProfileContent()
+    );
   }
 
   @override
