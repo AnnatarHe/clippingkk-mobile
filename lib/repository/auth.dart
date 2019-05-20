@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ClippingKK/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -54,6 +55,7 @@ class AuthRepository extends KKHttpClient {
       final err = KKHttpError(msg: response.msg);
       return Future.error(err);
     }
+
     return UserProfileItem.fromJSON(response.data);
   }
 }

@@ -31,6 +31,7 @@ class _OnInit {
     final jwt = result[0];
     final uid = result[1];
     AppConfig.jwtToken = jwt == null ? "" : jwt;
+
     AppConfig.uid = uid != null ? int.parse(uid) : -1;
   }
 
