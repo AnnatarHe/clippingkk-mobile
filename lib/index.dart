@@ -1,6 +1,7 @@
 import 'package:ClippingKK/components/appbar-title.dart';
 import 'package:ClippingKK/pages/home-book.dart';
 import 'package:ClippingKK/components/navigation-icon.dart';
+import 'package:ClippingKK/pages/search/search.dart';
 import 'package:ClippingKK/repository/misc.dart';
 import 'package:flutter/material.dart';
 import 'package:ClippingKK/model/appConfig.dart';
@@ -96,7 +97,14 @@ class IndexPageState extends State<IndexPage>
           appBar: AppBar(
             title: AppBarTitle(tabIndex: this._currentIndex),
             actions: <Widget>[
-              NavigationRightIcon()
+              NavigationRightIcon(),
+              if (AppConfig.jwtToken != "" && this._currentIndex == 0)
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(context: context, delegate: BookClippingsSearch());
+                  }
+                )
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(

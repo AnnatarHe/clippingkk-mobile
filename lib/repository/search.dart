@@ -1,3 +1,4 @@
+import 'package:ClippingKK/model/doubanBookInfo.dart';
 import 'package:dio/dio.dart';
 import 'package:ClippingKK/model/httpClient.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
@@ -9,22 +10,22 @@ enum SearchResultType {
 
 // 第一期仅支持图书结果
 class SearchResultItem {
-  String bookName;
-  SearchResultType type;
-  int bookID;
-  String bookCover;
-  String author;
+
+  KKBookInfo bookInfo;
+  ClippingItem clipping;
+
+  SearchResultItem();
 
   SearchResultItem.fromJSON(dynamic data)
-  : bookName = data['bookName'],
-  type = data['type'] == 'book' ? SearchResultType.Book : SearchResultType.Clipping,
-  bookID = data['bookId'],
-  bookCover = 'https://cdn.annatarhe.com/${data['image']}-copyrightDB.webp',
-  author = data['author'];
+  : bookInfo = KKBookInfo.fromJSON(data['book']),
+    clipping = ClippingItem.fromJSON(data['clipping']);
 }
 
 class SearchAPI extends KKHttpClient {
   Future<List<SearchResultItem>> SearchAnything(String query, int take, int offset) async {
+
+    // final mockData = SearchResultItem();
+
     HttpResponse result;
     try {
       final _resp = await this.client.post('/search/all', data: {

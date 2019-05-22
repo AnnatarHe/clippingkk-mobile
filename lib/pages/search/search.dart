@@ -1,3 +1,4 @@
+import 'package:ClippingKK/pages/book-detail.dart';
 import 'package:ClippingKK/repository/search.dart';
 import 'package:flutter/material.dart';
 
@@ -55,10 +56,13 @@ class BookClippingsSearch extends SearchDelegate {
 
         if (results.length == 0) {
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                "No Results Found.",
-              ),
+              Center(
+                child: Text(
+                  "No Results Found.",
+                ),
+              )
             ],
           );
         }
@@ -66,9 +70,32 @@ class BookClippingsSearch extends SearchDelegate {
         return ListView.builder(
           itemCount: results.length,
           itemBuilder: (context, index) {
-            var result = results[index];
-            return ListTile(
-              title: Text(result.bookName),
+            final result = results[index];
+
+            return InkWell(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Row(
+                    children: <Widget>[
+                      Image.network(result.bookInfo.image),
+                      Column(
+                        children: <Widget>[
+                          Text(result.bookInfo.title),
+                          Text(result.bookInfo.author),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext ctx) =>
+                            BookDetailPage(bookInfo: result.bookInfo)));
+              },
             );
           },
         );

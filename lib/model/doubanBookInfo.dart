@@ -1,4 +1,3 @@
-
 class DoubanBookInfo {
   String rating;
   String image;
