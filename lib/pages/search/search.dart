@@ -1,4 +1,4 @@
-import 'package:ClippingKK/pages/book-detail.dart';
+import 'package:ClippingKK/pages/search/clipping.dart';
 import 'package:ClippingKK/repository/search.dart';
 import 'package:flutter/material.dart';
 
@@ -27,13 +27,13 @@ class BookClippingsSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    if (query.length < 3) {
+    if (query.length < 2) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Center(
             child: Text(
-              "Search term must be longer than two letters.",
+              "Search term must be longer than one letter.",
             ),
           )
         ],
@@ -52,9 +52,9 @@ class BookClippingsSearch extends SearchDelegate {
           );
         }
 
-        List<SearchResultItem> results = snapshot.data;
+        SearchResultItem results = snapshot.data;
 
-        if (results.length == 0) {
+        if (results.clippings.length == 0) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -67,40 +67,18 @@ class BookClippingsSearch extends SearchDelegate {
           );
         }
 
-        return ListView.builder(
-          itemCount: results.length,
-          itemBuilder: (context, index) {
-            final result = results[index];
+        final clippings = results.clippings;
 
-            return InkWell(
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Row(
-                    children: <Widget>[
-                      Image.network(result.bookInfo.image),
-                      Column(
-                        children: <Widget>[
-                          Text(result.bookInfo.title),
-                          Text(result.bookInfo.author),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext ctx) =>
-                            BookDetailPage(bookInfo: result.bookInfo)));
-              },
-            );
+        return ListView.builder(
+          itemCount: clippings.length,
+          itemBuilder: (context, index) {
+            final result = clippings[index];
+
+            return SearchClippingResult(result: result);
           },
         );
       },
-      future: SearchAPI().SearchAnything(query, 20, 0),
+      future: SearchAPI().searchAnything(query, 20, 0),
     );
   }
 

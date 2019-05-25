@@ -1,51 +1,54 @@
 import 'package:ClippingKK/model/doubanBookInfo.dart';
+import 'package:ClippingKK/utils/logger.dart';
 import 'package:dio/dio.dart';
 import 'package:ClippingKK/model/httpClient.dart';
 import 'package:ClippingKK/model/httpResponse.dart';
 
-enum SearchResultType {
-  Book,
-  Clipping
-}
+enum SearchResultType { Book, Clipping }
 
 // 第一期仅支持图书结果
 class SearchResultItem {
-
-  KKBookInfo bookInfo;
-  ClippingItem clipping;
+  List<KKBookInfo> books;
+  List<ClippingItem> clippings;
 
   SearchResultItem();
 
-  SearchResultItem.fromJSON(dynamic data)
-  : bookInfo = KKBookInfo.fromJSON(data['book']),
-    clipping = ClippingItem.fromJSON(data['clipping']);
+  SearchResultItem.fromJSON(dynamic data) {
+    if (data['books'] != null) {
+      final List<dynamic> _books = data['books'].toList();
+      this.books = _books.map((item) => KKBookInfo.fromJSON(item)).toList();
+    } else {
+      this.books = [];
+    }
+
+    if (data['clippings'] != null) {
+      final List<dynamic> _clippings = data['clippings'].toList();
+      this.clippings = _clippings.map((item) => ClippingItem.fromJSON(item)).toList();
+    }
+  }
 }
 
 class SearchAPI extends KKHttpClient {
-  Future<List<SearchResultItem>> SearchAnything(String query, int take, int offset) async {
-
+  Future<SearchResultItem> searchAnything(
+      String query, int take, int offset) async {
     // final mockData = SearchResultItem();
 
     HttpResponse result;
     try {
-      final _resp = await this.client.post('/search/all', data: {
-        'query': query,
-        'take': take,
-        'from': offset
-      });
+      final _resp = await this.client.post('/search/all',
+          data: {'query': query, 'take': take, 'from': offset});
       result = HttpResponse.fromJSON(_resp.data);
-    } on DioError catch(err) {
+    } on DioError catch (err) {
       print(err);
-      return List.of([]);
+      return null;
     }
 
     if (result.data == null) {
-      return List.of([]);
+      return null;
     }
 
-    final List<dynamic> list = result.data.toList();
+    final res = SearchResultItem.fromJSON(result.data);
 
-    final List<SearchResultItem> rtn = list.map((item) => SearchResultItem.fromJSON(item)).toList();
-    return rtn;
+    return res;
   }
 }
