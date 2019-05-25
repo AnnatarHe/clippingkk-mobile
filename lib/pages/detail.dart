@@ -4,6 +4,7 @@ import 'dart:core';
 import 'dart:async';
 import 'package:ClippingKK/components/clipping-content-text.dart';
 import 'package:ClippingKK/model/doubanBookInfo.dart';
+import 'package:ClippingKK/repository/book.dart';
 import 'package:ClippingKK/repository/douban.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +49,7 @@ class DetailPageState extends State<DetailPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  DoubanBookInfo _bookInfo;
+  KKBookInfo _bookInfo;
   bool _paninting = false;
 
   @override
@@ -58,7 +59,7 @@ class DetailPageState extends State<DetailPage> {
   }
 
   void _loadInfo() async {
-    final info = await DoubanAPI().search(widget.item.title);
+    final info = await BookRepository().load(widget.item.bookId);
     setState(() {
       _bookInfo = info;
     });

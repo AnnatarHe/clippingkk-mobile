@@ -24,6 +24,8 @@ class SearchResultItem {
     if (data['clippings'] != null) {
       final List<dynamic> _clippings = data['clippings'].toList();
       this.clippings = _clippings.map((item) => ClippingItem.fromJSON(item)).toList();
+    } else {
+      this.clippings = [];
     }
   }
 }
