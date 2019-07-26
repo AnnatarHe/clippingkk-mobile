@@ -10,6 +10,7 @@ class _LoginFirstPage extends StatelessWidget {
   void Function(String token, int uid) onGotJWT;
 
   _LoginFirstPage({this.onGotJWT});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,8 +53,7 @@ class ProfileState extends State<ProfilePage>
     return ScopedModelDescendant<GlobalAppConfig>(
         builder: (context, child, model) => model.jwtToken == ""
             ? _LoginFirstPage(onGotJWT: model.update)
-            : ProfileContent()
-    );
+          : ProfileContent());
   }
 
   @override

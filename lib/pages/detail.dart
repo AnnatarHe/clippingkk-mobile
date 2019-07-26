@@ -3,9 +3,11 @@ import 'dart:ui' as ui;
 import 'dart:core';
 import 'dart:async';
 import 'package:ClippingKK/components/clipping-content-text.dart';
+import 'package:ClippingKK/model/appConfig.dart';
 import 'package:ClippingKK/model/doubanBookInfo.dart';
 import 'package:ClippingKK/repository/book.dart';
 import 'package:ClippingKK/repository/douban.dart';
+import 'package:ClippingKK/repository/mp.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -69,10 +71,26 @@ class DetailPageState extends State<DetailPage> {
     if (_paninting) {
       return;
     }
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return new Dialog(
+          child: new Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ),
+        );
+      },
+    );
     setState(() {
       _paninting = true;
     });
     _ShareImageRender shareImage = _ShareImageRender(
+      clippingID: this.widget.item.id,
       author: this._bookInfo.author,
       content: this.widget.item.content,
       bookTitle: this.widget.item.title,
@@ -85,6 +103,7 @@ class DetailPageState extends State<DetailPage> {
     } catch (e) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('error~')));
     } finally {
+      Navigator.pop(context);
       setState(() {
         _paninting = false;
       });
@@ -150,12 +169,14 @@ class _ShareImageRender {
   final _grap = 80.0;
   final _QRCodeSize = Size(150.0, 150.0);
 
+  final int clippingID;
   final String author;
   final String content;
   final String bookTitle;
   final String backgroundUrl;
 
   _ShareImageRender({
+    @required this.clippingID,
     @required this.author,
     @required this.content,
     @required this.bookTitle,
@@ -171,8 +192,9 @@ class _ShareImageRender {
     );
   }
 
-  Future<ui.Image> _loadImageAssets(String url) async {
-    final _image = await http.readBytes(url);
+  Future<ui.Image> _loadImageAssets(String url,
+    {Map<String, String> headers}) async {
+    final _image = await http.readBytes(url, headers: headers);
 
     final bg = await ui.instantiateImageCodec(_image);
     final frame = await bg.getNextFrame();
@@ -242,11 +264,19 @@ class _ShareImageRender {
     return _canvas;
   }
 
-
   Future<ByteData> buildImage() async {
     final responses = await Future.wait([
       this._loadImageAssets(this.backgroundUrl),
-      this._loadImageAssets(_websiteQRCode)
+      this._loadImageAssets(
+        MPRepository.getQRCodeUrl(
+          Uri.encodeComponent('c=${this.clippingID}'),
+          '/pages/landing/landing',
+          120,
+          true
+        ),
+        headers: {
+          "Authorization": 'Bearer ${AppConfig.jwtToken}'
+        })
     ]);
     await this._setupBackground(responses[0]);
     await this._setupClippingContent();
