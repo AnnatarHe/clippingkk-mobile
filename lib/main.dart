@@ -7,6 +7,7 @@ import 'package:ClippingKK/utils/logger.dart';
 import 'package:ClippingKK/pages/setting.dart';
 import './index.dart';
 import './pages/auth.dart';
+import 'package:fluwx/fluwx.dart' as fluwx;
 
 class _OnInit {
   static final _OnInit _handler = new _OnInit._internal();
@@ -19,6 +20,7 @@ class _OnInit {
     if (!AppConfig.isDev) {
       this.initSentry();
     }
+    this.initWechat();
     return this.preLoadUserInfo();
   }
 
@@ -37,6 +39,10 @@ class _OnInit {
 
   void initSentry() {
     Reporter();
+  }
+
+  void initWechat() {
+    fluwx.register(appId: "wxb602f4d89c1112c3");
   }
 }
 

@@ -17,7 +17,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image/image.dart' as imgPack;
 import '../utils/logger.dart';
-
+import 'package:fluwx/fluwx.dart' as fluwx;
 const _shareBackgroundImages = [
   'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm3nz77j20u01hcdr5.jpg',
   'https://ws1.sinaimg.cn/large/8112eefdgy1g08jm3e6h1j20u01hcdpm.jpg',
@@ -110,6 +110,17 @@ class DetailPageState extends State<DetailPage> {
     }
   }
 
+  void doShare() {
+    fluwx.share(fluwx.WeChatShareMiniProgramModel(
+      webPageUrl: "https://kindle.annatarhe.com",
+      miniProgramType: fluwx.WXMiniProgramType.RELEASE,
+      userName: "gh_9baff53eecdc",
+      title: this.widget.item.title,
+      description: this.widget.item.content,
+      thumbnail: this._bookInfo.image
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundImage =
@@ -125,6 +136,8 @@ class DetailPageState extends State<DetailPage> {
             onPressed: () => this._saveScreenshot(context))
         ],
       ),
+      floatingActionButton: FlatButton(
+        onPressed: this.doShare, child: Icon(Icons.share)),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
