@@ -8,6 +8,10 @@ import 'package:ClippingKK/pages/setting.dart';
 import './index.dart';
 import './pages/auth.dart';
 import 'package:fluwx/fluwx.dart' as fluwx;
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
+
+FirebaseAnalytics analytics = FirebaseAnalytics();
 
 class _OnInit {
   static final _OnInit _handler = new _OnInit._internal();
@@ -63,6 +67,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
       initialRoute: '/',
       routes: {
         '/': (context) => IndexPage(),

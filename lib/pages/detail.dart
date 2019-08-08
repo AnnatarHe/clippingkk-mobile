@@ -76,13 +76,17 @@ class DetailPageState extends State<DetailPage> {
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
         return new Dialog(
-          child: new Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              new CircularProgressIndicator(),
-              new Text("Loading"),
-            ],
-          ),
+          child: Container(
+            padding: const EdgeInsets.all(10.0),
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                new CircularProgressIndicator(),
+                new Text("Loading"),
+              ],
+            ),
+          )
         );
       },
     );
@@ -116,8 +120,10 @@ class DetailPageState extends State<DetailPage> {
       miniProgramType: fluwx.WXMiniProgramType.RELEASE,
       userName: "gh_9baff53eecdc",
       title: this.widget.item.title,
+      path: "/pages/landing/landing?c=${this.widget.item.id}",
       description: this.widget.item.content,
-      thumbnail: this._bookInfo.image
+      thumbnail: this._bookInfo.image,
+      hdImagePath: this._bookInfo.image,
     ));
   }
 
@@ -136,8 +142,11 @@ class DetailPageState extends State<DetailPage> {
             onPressed: () => this._saveScreenshot(context))
         ],
       ),
-      floatingActionButton: FlatButton(
-        onPressed: this.doShare, child: Icon(Icons.share)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: this.doShare,
+        child: Icon(Icons.share),
+        backgroundColor: Colors.blue,
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -180,7 +189,7 @@ class _ShareImageRender {
   Canvas _canvas;
 
   final _grap = 80.0;
-  final _QRCodeSize = Size(150.0, 150.0);
+  final _QRCodeSize = Size(300.0, 300.0);
 
   final int clippingID;
   final String author;
@@ -208,7 +217,6 @@ class _ShareImageRender {
   Future<ui.Image> _loadImageAssets(String url,
     {Map<String, String> headers}) async {
     final _image = await http.readBytes(url, headers: headers);
-
     final bg = await ui.instantiateImageCodec(_image);
     final frame = await bg.getNextFrame();
     final img = frame.image;
@@ -279,13 +287,13 @@ class _ShareImageRender {
 
   Future<ByteData> buildImage() async {
     final responses = await Future.wait([
-      this._loadImageAssets(this.backgroundUrl),
+      this._loadImageAssets("https://picsum.photos/1080/1920?blur=5"),
       this._loadImageAssets(
         MPRepository.getQRCodeUrl(
           Uri.encodeComponent('c=${this.clippingID}'),
-          '/pages/landing/landing',
-          120,
-          true
+          'pages/landing/landing',
+          1200,
+          false
         ),
         headers: {
           "Authorization": 'Bearer ${AppConfig.jwtToken}'

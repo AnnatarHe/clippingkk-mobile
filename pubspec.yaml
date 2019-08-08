@@ -30,6 +30,8 @@ dependencies:
   logging: any
   image: 2.0.7
   fluwx: ^1.0.4
+  firebase_core: ^0.2.5
+  firebase_analytics: ^1.0.4
 
 dev_dependencies:
   flutter_test:
