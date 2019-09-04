@@ -65,7 +65,9 @@ class MyApp extends StatelessWidget {
       title: 'ClippingKK',
       showPerformanceOverlay: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+//        primarySwatch: Colors.black45,
+//        primaryColor: Colors.red,
+        primaryColor: const Color.fromRGBO(33, 150, 243, 1),
       ),
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: analytics),

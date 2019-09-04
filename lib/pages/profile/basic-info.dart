@@ -4,8 +4,9 @@ import 'package:ClippingKK/model/httpClient.dart' as model;
 
 class BasicInfo extends StatelessWidget {
   final model.User user;
+  final int count;
 
-  BasicInfo({@required this.user});
+  BasicInfo({@required this.user, @required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +24,11 @@ class BasicInfo extends StatelessWidget {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.only(left: 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(user.name, style: profileStyle.profileUsernameStyle), 
-                  Text(user.email)
+                  Text(user.name, style: profileStyle.profileUsernameStyle),
+                  Text(user.email),
+                  Text('已经收集了 ${this.count} 条数据了呢 😉'),
                 ],
               ),
             )
