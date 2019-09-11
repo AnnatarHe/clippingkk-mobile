@@ -11,7 +11,7 @@ import Flutter
   ) -> Bool {
     
     let rootController = window.rootViewController as! FlutterViewController
-    let clippingkkChannel = FlutterMethodChannel(name: "com.annatarhe.clippingkk/channel", binaryMessenger: rootController)
+    let clippingkkChannel = FlutterMethodChannel(name: "com.annatarhe.clippingkk/channel", binaryMessenger: rootController.binaryMessenger)
     
     clippingkkChannel.setMethodCallHandler(self.flutterMethodHandler)
     
