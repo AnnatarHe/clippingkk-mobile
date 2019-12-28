@@ -39,4 +39,7 @@ class CardClipping extends StatelessWidget {
           )),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

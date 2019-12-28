@@ -105,6 +105,7 @@ class _MyHomePageState extends State<HomePage>
               }
               return LoadingItem(visible: _loading && this._clippingItems.length > 0);
             },
+            addAutomaticKeepAlives: true,
           ),
           onRefresh: this._onRefresh),
       ),
